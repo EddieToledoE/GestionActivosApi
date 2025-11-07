@@ -1,0 +1,28 @@
+@GestionActivosApi_HostAddress = http://localhost:5111
+
+GET {{GestionActivosApi_HostAddress}}/api/weatherforecast/
+Accept: application/json
+
+###
+
+GET {{GestionActivosApi_HostAddress}}/api/weatherforecast/test
+
+###
+
+POST {{GestionActivosApi_HostAddress}}/api/weatherforecast
+Content-Type: application/json
+
+"Eddie Toledo"
+
+###
+
+@count=12
+POST {{GestionActivosApi_HostAddress}}/api/weatherforecast/generate?count={{count}}
+Content-Type: application/json
+
+{
+  "minTemperature": -5,
+  "maxTemperature": 15
+}
+
+###
