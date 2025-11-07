@@ -1,29 +1,67 @@
-using GestionActivos.Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
+using GestionActivos.API.Extensions;
+using Serilog;
 
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-var builder = WebApplication.CreateBuilder(args);
+// === CONFIGURACIÓN ===
+ConfigureAppConfiguration(builder);
+ConfigureLogging(builder);
+ConfigureServices(builder);
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+WebApplication app = builder.Build();
 
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseAuthorization();
-
-app.MapControllers();
+// === PIPELINE HTTP ===
+ConfigurePipeline(app, app.Environment);
 
 app.Run();
+
+// ============================ MÉTODOS ============================
+
+void ConfigureAppConfiguration(WebApplicationBuilder builder)
+{
+    builder.Configuration.AddEnvironmentVariables();
+}
+
+void ConfigureLogging(WebApplicationBuilder builder)
+{
+    builder.Host.UseSerilog(
+        (context, config) =>
+        {
+            config.MinimumLevel.Information();
+            config.WriteTo.Console();
+            config.WriteTo.File("logs/app.log", rollingInterval: RollingInterval.Day);
+        }
+    );
+}
+
+void ConfigureServices(WebApplicationBuilder builder)
+{
+    // Base de datos
+    builder.Services.AddDbConnection(builder.Configuration);
+
+    // Dependencias
+    builder.Services.AddDependencyInjectionRepositories();
+    builder.Services.AddDependencyInjectionUnitsOfWork();
+    builder.Services.AddDependencyInjectionServices();
+
+    // MediatR y AutoMapper
+    builder.Services.AddMediatRSettings();
+    builder.Services.AddAutoMapperProfiles();
+
+    builder.Services.AddControllers();
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
+}
+
+void ConfigurePipeline(WebApplication app, IHostEnvironment env)
+{
+    if (env.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
+
+    app.UseHttpsRedirection();
+    app.UseAuthorization();
+    app.MapControllers();
+}
