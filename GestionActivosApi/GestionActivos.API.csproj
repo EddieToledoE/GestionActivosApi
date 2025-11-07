@@ -21,4 +21,9 @@
     <Folder Include="Controllers\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\GestionActivos.Application\GestionActivos.Application.csproj" />
+    <ProjectReference Include="..\GestionActivos.Infrastructure\GestionActivos.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
