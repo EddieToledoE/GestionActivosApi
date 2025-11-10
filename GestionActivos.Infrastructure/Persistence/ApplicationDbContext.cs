@@ -6,9 +6,8 @@ namespace GestionActivos.Infrastructure.Persistence
     public class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options)
-        {
-        }
+            : base(options) { }
+
         // DbSets
         public DbSet<Usuario> Usuarios => Set<Usuario>();
         public DbSet<Rol> Roles => Set<Rol>();
@@ -23,6 +22,8 @@ namespace GestionActivos.Infrastructure.Persistence
         public DbSet<ConfigAuditoria> ConfigAuditorias => Set<ConfigAuditoria>();
         public DbSet<Auditoria> Auditorias => Set<Auditoria>();
         public DbSet<DetalleAuditoria> DetallesAuditoria => Set<DetalleAuditoria>();
+
+        public DbSet<CentroCosto> CentrosCosto => Set<CentroCosto>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

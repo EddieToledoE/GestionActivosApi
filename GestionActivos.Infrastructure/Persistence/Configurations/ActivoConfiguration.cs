@@ -12,7 +12,11 @@ namespace GestionActivos.Infrastructure.Persistence.Configurations
 
             builder.HasKey(a => a.IdActivo);
 
-            builder.Property(a => a.Imagen).HasColumnType("varbinary(max)");
+            builder
+                .Property(a => a.ImagenUrl)
+                .HasMaxLength(400)
+                .HasColumnName("ImagenUrl")
+                .IsRequired(false);
 
             builder.Property(a => a.Categoria).HasMaxLength(50);
 

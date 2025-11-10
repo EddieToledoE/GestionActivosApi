@@ -42,9 +42,9 @@ namespace GestionActivos.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] UsuarioDto dto)
+        public async Task<IActionResult> Update(int id, [FromBody] UpdateUsuarioDto dto)
         {
-            if (id != dto.IdUsuario)
+            if (id != dto.Id)
                 return BadRequest();
 
             var success = await _mediator.Send(new UpdateUsuarioCommand(dto));

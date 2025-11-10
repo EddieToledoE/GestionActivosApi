@@ -10,6 +10,7 @@ namespace GestionActivos.Application.UsuarioApplication.MappingProfiles
         {
             CreateMap<Usuario, UsuarioDto>();
             CreateMap<CreateUsuarioDto, Usuario>();
+            CreateMap<UpdateUsuarioDto, Usuario>();
         }
     }
 }

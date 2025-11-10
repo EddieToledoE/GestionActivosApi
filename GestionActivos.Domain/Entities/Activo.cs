@@ -3,7 +3,7 @@
     public class Activo
     {
         public int IdActivo { get; set; }
-        public byte[]? Imagen { get; set; }
+        public string? ImagenUrl { get; set; }
         public string? Categoria { get; set; }
         public int ResponsableId { get; set; }
         public int IdCategoria { get; set; }
@@ -25,6 +25,7 @@
         public Categoria CategoriaNavigation { get; set; } = null!;
         public ICollection<Reubicacion> Reubicaciones { get; set; } = new List<Reubicacion>();
         public ICollection<Diagnostico> Diagnosticos { get; set; } = new List<Diagnostico>();
-        public ICollection<DetalleAuditoria> DetallesAuditoria { get; set; } = new List<DetalleAuditoria>();
+        public ICollection<DetalleAuditoria> DetallesAuditoria { get; set; } =
+            new List<DetalleAuditoria>();
     }
 }
