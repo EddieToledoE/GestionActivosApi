@@ -18,8 +18,6 @@ namespace GestionActivos.Infrastructure.Persistence.Configurations
                 .HasColumnName("ImagenUrl")
                 .IsRequired(false);
 
-            builder.Property(a => a.Categoria).HasMaxLength(50);
-
             builder.Property(a => a.Marca).HasMaxLength(100);
 
             builder.Property(a => a.Modelo).HasMaxLength(100);
@@ -55,7 +53,8 @@ namespace GestionActivos.Infrastructure.Persistence.Configurations
                 .HasOne(a => a.CategoriaNavigation)
                 .WithMany(c => c.Activos)
                 .HasForeignKey(a => a.IdCategoria)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired();
         }
     }
 }

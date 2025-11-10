@@ -18,7 +18,6 @@ multipart/form-data
 | Campo | Tipo | Requerido | Descripción |
 |-------|------|-----------|-------------|
 | `Imagen` | IFormFile | No | Archivo de imagen del activo (máx 5MB) |
-| `Categoria` | string | No | Nombre de la categoría |
 | `ResponsableId` | int | Sí | ID del usuario responsable |
 | `IdCategoria` | int | Sí | ID de la categoría |
 | `Marca` | string | No | Marca del activo (máx 100 caracteres) |

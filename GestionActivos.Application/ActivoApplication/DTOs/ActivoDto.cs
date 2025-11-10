@@ -4,7 +4,6 @@ namespace GestionActivos.Application.ActivoApplication.DTOs
     {
         public int IdActivo { get; set; }
         public string? ImagenUrl { get; set; }
-        public string? Categoria { get; set; }
         public int ResponsableId { get; set; }
         public int IdCategoria { get; set; }
         public string? Marca { get; set; }
