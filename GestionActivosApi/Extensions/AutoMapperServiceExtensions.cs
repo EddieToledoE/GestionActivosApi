@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GestionActivos.Application.ActivoApplication.MappingProfiles;
 using GestionActivos.Application.AuthApplication.MappingProfiles;
 using GestionActivos.Application.CategoriaApplication.MappingProfiles;
 using GestionActivos.Application.UsuarioApplication.MappingProfiles;
@@ -14,6 +15,7 @@ namespace GestionActivos.API.Extensions
                 cfg.AddProfile<UsuarioProfile>();
                 cfg.AddProfile<AuthProfile>();
                 cfg.AddProfile<CategoriaProfile>();
+                cfg.AddProfile<ActivoProfile>();
             });
 
             return services;
