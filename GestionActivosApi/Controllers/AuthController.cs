@@ -20,9 +20,6 @@ namespace GestionActivos.API.Controllers
         {
             var usuario = await _mediator.Send(command);
 
-            if (usuario is null)
-                return Unauthorized(new { message = "Credenciales incorrectas" });
-
             return Ok(
                 new
                 {

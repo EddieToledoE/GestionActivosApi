@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using GestionActivos.Application.UsuarioApplication.DTOs;
 using GestionActivos.Domain.Entities;
+using GestionActivos.Domain.Exceptions;
 using GestionActivos.Domain.Interfaces;
 using MediatR;
 
@@ -31,6 +32,21 @@ namespace GestionActivos.Application.UsuarioApplication.Commands
                     "El usuario no puede ser nulo."
                 );
             }
+
+            // Validar si el correo ya existe
+            if (!string.IsNullOrEmpty(request.Usuario.Correo))
+            {
+                var existeCorreo = await _usuarioRepository.ExistsByCorreoAsync(
+                    request.Usuario.Correo
+                );
+                if (existeCorreo)
+                {
+                    throw new BusinessException(
+                        $"Ya existe un usuario con el correo '{request.Usuario.Correo}'."
+                    );
+                }
+            }
+
             var usuario = _mapper.Map<Usuario>(request.Usuario);
 
             await _usuarioRepository.AddAsync(usuario);

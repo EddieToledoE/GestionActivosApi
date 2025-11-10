@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using GestionActivos.Application.UsuarioApplication.DTOs;
+using GestionActivos.Domain.Exceptions;
 using GestionActivos.Domain.Interfaces;
 using MediatR;
 
 namespace GestionActivos.Application.UsuarioApplication.Queries
 {
-    public record GetUsuarioByIdQuery(int IdUsuario) : IRequest<UsuarioDto?>;
+    public record GetUsuarioByIdQuery(int IdUsuario) : IRequest<UsuarioDto>;
 
-    public class GetUsuarioByIdHandler : IRequestHandler<GetUsuarioByIdQuery, UsuarioDto?>
+    public class GetUsuarioByIdHandler : IRequestHandler<GetUsuarioByIdQuery, UsuarioDto>
     {
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly IMapper _mapper;
@@ -23,13 +19,23 @@ namespace GestionActivos.Application.UsuarioApplication.Queries
             _mapper = mapper;
         }
 
-        public async Task<UsuarioDto?> Handle(
+        public async Task<UsuarioDto> Handle(
             GetUsuarioByIdQuery request,
             CancellationToken cancellationToken
         )
         {
+            if (request.IdUsuario <= 0)
+            {
+                throw new BusinessException("El ID del usuario debe ser mayor que 0.");
+            }
+
             var usuario = await _usuarioRepository.GetByIdAsync(request.IdUsuario);
-            return _mapper.Map<UsuarioDto?>(usuario);
+            if (usuario == null)
+            {
+                throw new NotFoundException(nameof(Domain.Entities.Usuario), request.IdUsuario);
+            }
+
+            return _mapper.Map<UsuarioDto>(usuario);
         }
     }
 }

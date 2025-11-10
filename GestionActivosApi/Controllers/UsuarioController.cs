@@ -28,9 +28,6 @@ namespace GestionActivos.API.Controllers
         public async Task<IActionResult> GetById(int id)
         {
             var usuario = await _mediator.Send(new GetUsuarioByIdQuery(id));
-            if (usuario is null)
-                return NotFound();
-
             return Ok(usuario);
         }
 
@@ -45,17 +42,19 @@ namespace GestionActivos.API.Controllers
         public async Task<IActionResult> Update(int id, [FromBody] UpdateUsuarioDto dto)
         {
             if (id != dto.Id)
-                return BadRequest();
+            {
+                return BadRequest(new { error = "El ID de la URL no coincide con el ID del cuerpo de la petición." });
+            }
 
-            var success = await _mediator.Send(new UpdateUsuarioCommand(dto));
-            return success ? Ok(new { message = "Usuario actualizado correctamente" }) : NotFound();
+            await _mediator.Send(new UpdateUsuarioCommand(dto));
+            return Ok(new { message = "Usuario actualizado correctamente" });
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var success = await _mediator.Send(new DeleteUsuarioCommand(id));
-            return success ? Ok(new { message = "Usuario desactivado correctamente" }) : NotFound();
+            await _mediator.Send(new DeleteUsuarioCommand(id));
+            return Ok(new { message = "Usuario desactivado correctamente" });
         }
     }
 }

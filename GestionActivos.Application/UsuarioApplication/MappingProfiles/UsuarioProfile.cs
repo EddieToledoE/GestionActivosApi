@@ -10,7 +10,9 @@ namespace GestionActivos.Application.UsuarioApplication.MappingProfiles
         {
             CreateMap<Usuario, UsuarioDto>();
             CreateMap<CreateUsuarioDto, Usuario>();
-            CreateMap<UpdateUsuarioDto, Usuario>();
+            
+            // Mapeo para UpdateUsuarioDto - se maneja manualmente en el handler
+            // No se crea mapeo automático para evitar actualizar campos no deseados
         }
     }
 }

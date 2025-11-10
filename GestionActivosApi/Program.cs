@@ -1,9 +1,10 @@
 using GestionActivos.API.Extensions;
+using GestionActivos.API.Middleware;
 using Serilog;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-// === CONFIGURACIÓN ===
+// === CONFIGURACIï¿½N ===
 ConfigureAppConfiguration(builder);
 ConfigureLogging(builder);
 ConfigureServices(builder);
@@ -15,7 +16,7 @@ ConfigurePipeline(app, app.Environment);
 
 app.Run();
 
-// ============================ MÉTODOS ============================
+// ============================ Mï¿½TODOS ============================
 
 void ConfigureAppConfiguration(WebApplicationBuilder builder)
 {
@@ -55,6 +56,9 @@ void ConfigureServices(WebApplicationBuilder builder)
 
 void ConfigurePipeline(WebApplication app, IHostEnvironment env)
 {
+    // Middleware de manejo de excepciones debe ir primero
+    app.UseMiddleware<ExceptionHandlingMiddleware>();
+
     if (env.IsDevelopment())
     {
         app.UseSwagger();

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using GestionActivos.Domain.Exceptions;
 using GestionActivos.Domain.Interfaces;
 using MediatR;
 
@@ -24,9 +20,21 @@ namespace GestionActivos.Application.UsuarioApplication.Commands
             CancellationToken cancellationToken
         )
         {
+            if (request.IdUsuario <= 0)
+            {
+                throw new BusinessException("El ID del usuario debe ser mayor que 0.");
+            }
+
             var user = await _usuarioRepository.GetByIdAsync(request.IdUsuario);
             if (user is null)
-                return false;
+            {
+                throw new NotFoundException(nameof(Domain.Entities.Usuario), request.IdUsuario);
+            }
+
+            if (!user.Activo)
+            {
+                throw new BusinessException("El usuario ya está desactivado.");
+            }
 
             user.Activo = false;
             await _usuarioRepository.UpdateAsync(user);
