@@ -24,10 +24,17 @@ namespace GestionActivos.API.Controllers
             return Ok(usuarios);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById(int id)
         {
             var usuario = await _mediator.Send(new GetUsuarioByIdQuery(id));
+            return Ok(usuario);
+        }
+
+        [HttpGet("claveFortia/{claveFortia}")]
+        public async Task<IActionResult> GetByClaveFortia(string claveFortia)
+        {
+            var usuario = await _mediator.Send(new GetUsuarioByClaveFortiaQuery(claveFortia));
             return Ok(usuario);
         }
 

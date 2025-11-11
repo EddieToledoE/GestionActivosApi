@@ -19,6 +19,11 @@ namespace GestionActivos.Infrastructure.Repositories
         public async Task<Usuario?> GetByCorreoAsync(string correo) =>
             await _context.Usuarios.FirstOrDefaultAsync(u => u.Correo == correo);
 
+        public async Task<Usuario?> GetByClaveFortiaAsync(string claveFortia) =>
+            await _context.Usuarios
+                .Include(u => u.CentroCosto)
+                .FirstOrDefaultAsync(u => u.ClaveFortia == claveFortia);
+
         public async Task<IEnumerable<Usuario>> GetAllAsync() =>
             await _context.Usuarios.ToListAsync();
 
