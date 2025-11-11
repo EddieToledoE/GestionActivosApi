@@ -6,7 +6,8 @@ namespace GestionActivos.Domain.Interfaces
     {
         Task<Activo?> GetByIdAsync(int id);
         Task<IEnumerable<Activo>> GetAllAsync();
-     Task AddAsync(Activo activo);
+        Task<IEnumerable<Activo>> GetByResponsableIdAsync(int responsableId);
+        Task AddAsync(Activo activo);
         Task UpdateAsync(Activo activo);
         Task DeleteAsync(int id);
         Task<bool> ExistsByEtiquetaAsync(string etiqueta);
