@@ -30,7 +30,11 @@ namespace GestionActivos.Infrastructure.Persistence.Configurations
 
             builder.Property(a => a.NumeroSerie).HasMaxLength(100);
 
-            builder.Property(a => a.Factura).HasMaxLength(100);
+            builder.Property(a => a.FacturaPDF).HasMaxLength(400).IsRequired(false);
+
+            builder.Property(a => a.FacturaXML).HasMaxLength(400).IsRequired(false);
+
+            builder.Property(a => a.CuentaContable).HasMaxLength(100).IsRequired(false);
 
             builder.Property(a => a.ValorAdquisicion).HasPrecision(12, 2);
 
@@ -39,6 +43,8 @@ namespace GestionActivos.Infrastructure.Persistence.Configurations
             builder.Property(a => a.Donacion).HasDefaultValue(false);
 
             builder.Property(a => a.PortaEtiqueta).HasDefaultValue(false);
+
+            builder.Property(a => a.CuentaContableEtiqueta).HasDefaultValue(false);
 
             builder.Property(a => a.FechaAlta).HasDefaultValueSql("GETDATE()");
 

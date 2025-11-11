@@ -13,9 +13,12 @@ namespace GestionActivos.Application.ActivoApplication.DTOs
         public string? Etiqueta { get; set; }
         public string? NumeroSerie { get; set; }
         public bool Donacion { get; set; } = false;
-        public string? Factura { get; set; }
+        public IFormFile? FacturaPDF { get; set; }
+        public IFormFile? FacturaXML { get; set; }
+        public string? CuentaContable { get; set; }
         public decimal? ValorAdquisicion { get; set; }
         public DateTime? FechaAdquisicion { get; set; }
         public bool PortaEtiqueta { get; set; } = false;
+        public bool CuentaContableEtiqueta { get; set; } = false;
     }
 }

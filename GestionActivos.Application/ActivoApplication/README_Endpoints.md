@@ -1,7 +1,7 @@
 # Endpoints: Gestión de Activos
 
 ## Descripción
-Estos endpoints permiten la gestión completa de activos con soporte para carga de imágenes a través de MinIO.
+Estos endpoints permiten la gestión completa de activos con soporte para carga de imágenes y documentos (Facturas PDF/XML) a través de MinIO.
 
 ---
 
@@ -30,30 +30,71 @@ multipart/form-data
 | `Etiqueta` | string | Sí | Etiqueta única del activo (máx 50 caracteres) |
 | `NumeroSerie` | string | No | Número de serie único (máx 100 caracteres) |
 | `Donacion` | bool | No | Indica si es donación (default: false) |
-| `Factura` | string | Condicional* | Número de factura (máx 100 caracteres) |
+| `FacturaPDF` | IFormFile | Condicional* | Archivo PDF de la factura (máx 10MB) |
+| `FacturaXML` | IFormFile | Condicional* | Archivo XML de la factura (máx 5MB) |
+| `CuentaContable` | string | Condicional* | Cuenta contable (máx 100 caracteres) |
 | `ValorAdquisicion` | decimal | Condicional* | Valor de adquisición del activo |
 | `FechaAdquisicion` | DateTime | Condicional* | Fecha de adquisición |
 | `PortaEtiqueta` | bool | No | Indica si porta etiqueta (default: false) |
+| `CuentaContableEtiqueta` | string | Condicional** | Cuenta contable de etiqueta (máx 100 caracteres) |
 
-\* **Condicional**: Estos campos son obligatorios SOLO cuando `Donacion = false`
+\* **Condicional (Donación)**: 
+- Si `Donacion = false`: 
+  - Al menos UNA factura (PDF o XML) es obligatoria
+  - `CuentaContable` es obligatorio
+  - `ValorAdquisicion` es obligatorio
+  - `FechaAdquisicion` es obligatorio
+
+\*\* **Condicional (Porta Etiqueta)**:
+- Si `PortaEtiqueta = true`: `CuentaContableEtiqueta` es obligatorio
 
 ### Reglas de Negocio
 
 1. **Validación de Donación**:
-   - Si `Donacion = true`: Los campos `Factura`, `ValorAdquisicion` y `FechaAdquisicion` quedan vacíos automáticamente
- - Si `Donacion = false`: Los campos `Factura`, `ValorAdquisicion` y `FechaAdquisicion` son obligatorios
+ - Si `Donacion = true`: Los campos `FacturaPDF`, `FacturaXML`, `CuentaContable`, `ValorAdquisicion` y `FechaAdquisicion` quedan vacíos automáticamente
+   - Si `Donacion = false`: 
+     - Al menos una factura (PDF o XML) es obligatoria
+     - `CuentaContable`, `ValorAdquisicion` y `FechaAdquisicion` son obligatorios
 
-2. **Validación de Unicidad**:
+2. **Validación de Porta Etiqueta**:
+   - Si `PortaEtiqueta = true`: `CuentaContableEtiqueta` es obligatorio
+   - Si `PortaEtiqueta = false`: `CuentaContableEtiqueta` queda vacío automáticamente
+
+3. **Validación de Unicidad**:
    - La `Etiqueta` debe ser única en el sistema
    - El `NumeroSerie` (si se proporciona) debe ser único
 
-3. **Validación de Existencia**:
+4. **Validación de Existencia**:
    - El `ResponsableId` debe corresponder a un usuario existente
- - El `IdCategoria` debe corresponder a una categoría existente
+   - El `IdCategoria` debe corresponder a una categoría existente
 
-4. **Validación de Imagen**:
-   - Tamaño máximo: 5MB
-   - Tipo de archivo: debe ser una imagen válida (image/*)
+5. **Validación de Archivos**:
+   - **Imagen**: Tamaño máximo 5MB, debe ser tipo image/*
+   - **FacturaPDF**: Tamaño máximo 10MB, debe ser application/pdf
+   - **FacturaXML**: Tamaño máximo 5MB, debe ser application/xml o text/xml
+
+### Ejemplo de Request (No Donación - Con ambas facturas)
+
+```bash
+curl -X POST "https://localhost:7000/api/Activo" \
+  -H "Content-Type: multipart/form-data" \
+  -F "Imagen=@/ruta/imagen.jpg" \
+  -F "ResponsableId=1" \
+  -F "IdCategoria=2" \
+  -F "Marca=Dell" \
+  -F "Modelo=Latitude 7420" \
+  -F "Descripcion=Laptop ejecutiva" \
+  -F "Etiqueta=LAPTOP-002" \
+  -F "NumeroSerie=SN987654321" \
+  -F "Donacion=false" \
+  -F "FacturaPDF=@/ruta/factura.pdf" \
+  -F "FacturaXML=@/ruta/factura.xml" \
+  -F "CuentaContable=1234567890" \
+  -F "ValorAdquisicion=25000.50" \
+  -F "FechaAdquisicion=2024-01-15" \
+  -F "PortaEtiqueta=true" \
+  -F "CuentaContableEtiqueta=9876543210"
+```
 
 ### Ejemplo de Request (Donación)
 
@@ -69,27 +110,7 @@ curl -X POST "https://localhost:7000/api/Activo" \
   -F "Etiqueta=LAPTOP-001" \
   -F "NumeroSerie=SN123456789" \
   -F "Donacion=true" \
-  -F "PortaEtiqueta=true"
-```
-
-### Ejemplo de Request (No Donación)
-
-```bash
-curl -X POST "https://localhost:7000/api/Activo" \
-  -H "Content-Type: multipart/form-data" \
-  -F "Imagen=@/ruta/imagen.jpg" \
-  -F "ResponsableId=1" \
-  -F "IdCategoria=2" \
-  -F "Marca=Dell" \
-  -F "Modelo=Latitude 7420" \
-  -F "Descripcion=Laptop ejecutiva" \
-  -F "Etiqueta=LAPTOP-002" \
-  -F "NumeroSerie=SN987654321" \
-  -F "Donacion=false" \
-  -F "Factura=FAC-2024-001" \
-  -F "ValorAdquisicion=25000.50" \
-  -F "FechaAdquisicion=2024-01-15" \
-  -F "PortaEtiqueta=true"
+  -F "PortaEtiqueta=false"
 ```
 
 ### Respuesta Exitosa (200 OK)
@@ -116,21 +137,24 @@ GET /api/Activo
 [
   {
     "idActivo": 1,
-"imagenUrl": "http://localhost:9000/activos-bucket/activo_abc123.jpg",
+    "imagenUrl": "http://localhost:9000/activos-bucket/activo_imagen_abc123.jpg",
     "responsableId": 1,
     "idCategoria": 2,
     "marca": "Dell",
     "modelo": "Latitude 7420",
- "descripcion": "Laptop ejecutiva",
+    "descripcion": "Laptop ejecutiva",
     "etiqueta": "LAPTOP-001",
-  "numeroSerie": "SN123456789",
+ "numeroSerie": "SN123456789",
     "donacion": false,
-    "factura": "FAC-2024-001",
+    "facturaPDF": "http://localhost:9000/activos-bucket/activo_factura_pdf_def456.pdf",
+    "facturaXML": "http://localhost:9000/activos-bucket/activo_factura_xml_ghi789.xml",
+    "cuentaContable": "1234567890",
     "valorAdquisicion": 25000.50,
     "estatus": "Activo",
-  "fechaAdquisicion": "2024-01-15T00:00:00",
+    "fechaAdquisicion": "2024-01-15T00:00:00",
     "fechaAlta": "2024-11-10T15:30:00",
-    "portaEtiqueta": true
+    "portaEtiqueta": true,
+    "cuentaContableEtiqueta": "9876543210"
   }
 ]
 ```
@@ -161,21 +185,24 @@ curl -X GET "https://localhost:7000/api/Activo/1"
 ```json
 {
   "idActivo": 1,
-  "imagenUrl": "http://localhost:9000/activos-bucket/activo_abc123.jpg",
+  "imagenUrl": "http://localhost:9000/activos-bucket/activo_imagen_abc123.jpg",
   "responsableId": 1,
   "idCategoria": 2,
   "marca": "Dell",
   "modelo": "Latitude 7420",
-"descripcion": "Laptop ejecutiva",
+  "descripcion": "Laptop ejecutiva",
   "etiqueta": "LAPTOP-001",
   "numeroSerie": "SN123456789",
   "donacion": false,
-  "factura": "FAC-2024-001",
+  "facturaPDF": "http://localhost:9000/activos-bucket/activo_factura_pdf_def456.pdf",
+  "facturaXML": "http://localhost:9000/activos-bucket/activo_factura_xml_ghi789.xml",
+  "cuentaContable": "1234567890",
   "valorAdquisicion": 25000.50,
   "estatus": "Activo",
   "fechaAdquisicion": "2024-01-15T00:00:00",
   "fechaAlta": "2024-11-10T15:30:00",
-  "portaEtiqueta": true
+  "portaEtiqueta": true,
+  "cuentaContableEtiqueta": "9876543210"
 }
 ```
 
@@ -214,21 +241,24 @@ curl -X GET "https://localhost:7000/api/Activo/responsable/1"
 [
   {
     "idActivo": 1,
-    "imagenUrl": "http://localhost:9000/activos-bucket/activo_abc123.jpg",
+    "imagenUrl": "http://localhost:9000/activos-bucket/activo_imagen_abc123.jpg",
     "responsableId": 1,
     "idCategoria": 2,
     "marca": "Dell",
     "modelo": "Latitude 7420",
-    "descripcion": "Laptop ejecutiva",
-  "etiqueta": "LAPTOP-001",
+ "descripcion": "Laptop ejecutiva",
+    "etiqueta": "LAPTOP-001",
     "numeroSerie": "SN123456789",
     "donacion": false,
-    "factura": "FAC-2024-001",
+    "facturaPDF": "http://localhost:9000/activos-bucket/activo_factura_pdf_def456.pdf",
+    "facturaXML": "http://localhost:9000/activos-bucket/activo_factura_xml_ghi789.xml",
+    "cuentaContable": "1234567890",
     "valorAdquisicion": 25000.50,
     "estatus": "Activo",
     "fechaAdquisicion": "2024-01-15T00:00:00",
- "fechaAlta": "2024-11-10T15:30:00",
-    "portaEtiqueta": true
+    "fechaAlta": "2024-11-10T15:30:00",
+  "portaEtiqueta": true,
+    "cuentaContableEtiqueta": "9876543210"
   }
 ]
 ```
@@ -278,12 +308,32 @@ curl -X DELETE "https://localhost:7000/api/Activo/1"
 ## Respuestas de Error Comunes
 
 ### 400 Bad Request - Validación Fallida
+
+**Ejemplo 1: Falta factura cuando no es donación**
 ```json
 {
   "errors": {
-  "Etiqueta": ["La etiqueta es obligatoria."],
-    "Factura": ["La factura es obligatoria cuando no es donación."],
-    "Imagen": ["La imagen no puede exceder 5MB."]
+    "Activo": ["Debe proporcionar al menos una factura (PDF o XML) cuando no es donación."],
+    "CuentaContable": ["La cuenta contable es obligatoria cuando no es donación."]
+  }
+}
+```
+
+**Ejemplo 2: Falta cuenta contable de etiqueta**
+```json
+{
+  "errors": {
+    "CuentaContableEtiqueta": ["La cuenta contable de etiqueta es obligatoria cuando porta etiqueta."]
+  }
+}
+```
+
+**Ejemplo 3: Archivo inválido**
+```json
+{
+  "errors": {
+    "FacturaPDF": ["El archivo debe ser un PDF válido."],
+    "FacturaXML": ["La factura XML no puede exceder 5MB."]
   }
 }
 ```
@@ -304,15 +354,27 @@ curl -X DELETE "https://localhost:7000/api/Activo/1"
 
 ---
 
-## Estructura Creada
+## Estructura Actualizada
+
+### Cambios en la Base de Datos (Migración)
+
+**Columnas Eliminadas:**
+- `Factura` (string)
+
+**Columnas Agregadas:**
+- `FacturaPDF` (nvarchar(400)) - URL del PDF en MinIO
+- `FacturaXML` (nvarchar(400)) - URL del XML en MinIO
+- `CuentaContable` (nvarchar(100)) - Cuenta contable del activo
+- `CuentaContableEtiqueta` (nvarchar(100)) - Cuenta contable de la etiqueta
 
 ### Capa de Dominio
 - ? `IActivoRepository` - Interface del repositorio
+- ? `Activo` - Entidad actualizada con nuevos campos
 
 ### Capa de Aplicación
 
 **Commands:**
-- ? `CreateActivoCommand` - Crear activo
+- ? `CreateActivoCommand` - Crear activo con manejo de múltiples archivos
 - ? `DeleteActivoCommand` - Desactivar activo
 
 **Queries:**
@@ -321,18 +383,24 @@ curl -X DELETE "https://localhost:7000/api/Activo/1"
 - ? `GetActivosByResponsableIdQuery` - Obtener activos por responsable
 
 **DTOs:**
-- ? `CreateActivoDto` - DTO para crear activo
-- ? `ActivoDto` - DTO de respuesta
+- ? `CreateActivoDto` - DTO actualizado con campos de facturas y cuentas contables
+- ? `ActivoDto` - DTO de respuesta actualizado
 
 **Validators:**
-- ? `CreateActivoCommandValidator` - Validador FluentValidation
+- ? `CreateActivoCommandValidator` - Validador actualizado con:
+  - Validación de al menos una factura cuando no es donación
+  - Validación de cuenta contable cuando no es donación
+  - Validación de cuenta contable de etiqueta cuando porta etiqueta
+  - Validación de formatos de archivos PDF y XML
+  - Validación de tamaños máximos de archivos
 
 **Profiles:**
-- ? `ActivoProfile` - Perfil de AutoMapper
+- ? `ActivoProfile` - Perfil actualizado ignorando archivos en mapeo
 
 ### Capa de Infraestructura
 - ? `ActivoRepository` - Implementación del repositorio
 - ? `MinioStorageService` - Servicio de almacenamiento de archivos
+- ? `ActivoConfiguration` - Configuración EF Core actualizada
 
 ### Capa de API
 - ? `ActivoController` - Controlador REST con todos los endpoints
@@ -341,21 +409,33 @@ curl -X DELETE "https://localhost:7000/api/Activo/1"
 
 ## Notas Técnicas
 
-1. **Manejo de Imágenes**: 
-   - Las imágenes se suben a MinIO con un nombre único generado con GUID
-   - La URL de la imagen se almacena en el campo `ImagenUrl` del activo
+1. **Manejo de Archivos**: 
+   - Imágenes, PDFs y XMLs se suben a MinIO con nombres únicos generados con GUID
+   - Las URLs se almacenan en los campos correspondientes del activo
+   - Prefijos para archivos:
+     - Imagen: `activo_imagen_{guid}.ext`
+     - Factura PDF: `activo_factura_pdf_{guid}.pdf`
+     - Factura XML: `activo_factura_xml_{guid}.xml`
 
 2. **Campos Automáticos**:
    - `Estatus`: Se establece automáticamente como "Activo"
    - `FechaAlta`: Se establece automáticamente con la fecha actual
 
-3. **Soft Delete**:
+3. **Limpieza Automática de Campos**:
+   - Si `Donacion = true`: Se limpian `FacturaPDF`, `FacturaXML`, `CuentaContable`, `ValorAdquisicion` y `FechaAdquisicion`
+   - Si `PortaEtiqueta = false`: Se limpia `CuentaContableEtiqueta`
+
+4. **Soft Delete**:
    - El endpoint DELETE no elimina físicamente el activo
    - Solo cambia el campo `Estatus` de "Activo" a "Inactivo"
 
-4. **Arquitectura**:
+5. **Arquitectura**:
    - Patrón CQRS con MediatR
    - Validación con FluentValidation
    - Mapeo con AutoMapper
    - Manejo centralizado de excepciones
    - Sin Unit of Work para queries simples (solo lectura)
+
+6. **Validaciones Condicionales**:
+   - Las validaciones cambian dinámicamente según los valores de `Donacion` y `PortaEtiqueta`
+   - FluentValidation maneja estas reglas de negocio complejas de forma declarativa
