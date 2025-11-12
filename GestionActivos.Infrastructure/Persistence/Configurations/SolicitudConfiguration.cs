@@ -27,6 +27,11 @@ namespace GestionActivos.Infrastructure.Persistence.Configurations
                    .WithMany(u => u.SolicitudesRecibidas)
                    .HasForeignKey(s => s.IdReceptor)
                    .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(s => s.Activo)
+                   .WithMany()
+                   .HasForeignKey(s => s.IdActivo)
+                   .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

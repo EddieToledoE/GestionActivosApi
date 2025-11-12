@@ -2,6 +2,7 @@
 using GestionActivos.Application.ActivoApplication.MappingProfiles;
 using GestionActivos.Application.AuthApplication.MappingProfiles;
 using GestionActivos.Application.CategoriaApplication.MappingProfiles;
+using GestionActivos.Application.SolicitudApplication.MappingProfiles;
 using GestionActivos.Application.UsuarioApplication.MappingProfiles;
 
 namespace GestionActivos.API.Extensions
@@ -16,6 +17,7 @@ namespace GestionActivos.API.Extensions
                 cfg.AddProfile<AuthProfile>();
                 cfg.AddProfile<CategoriaProfile>();
                 cfg.AddProfile<ActivoProfile>();
+                cfg.AddProfile<SolicitudProfile>();
             });
 
             return services;
