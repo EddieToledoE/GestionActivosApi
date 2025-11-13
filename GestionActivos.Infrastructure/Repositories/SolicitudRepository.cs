@@ -55,23 +55,25 @@ namespace GestionActivos.Infrastructure.Repositories
         public async Task AddAsync(Solicitud solicitud)
         {
             await _context.Solicitudes.AddAsync(solicitud);
-            await _context.SaveChangesAsync();
+            // No llamar a SaveChangesAsync aquí, lo maneja el UoW o el llamador
         }
 
-        public async Task UpdateAsync(Solicitud solicitud)
+        public Task UpdateAsync(Solicitud solicitud)
         {
             _context.Solicitudes.Update(solicitud);
-            await _context.SaveChangesAsync();
+            // No llamar a SaveChangesAsync aquí, lo maneja el UoW o el llamador
+            return Task.CompletedTask;
         }
 
-        public async Task DeleteAsync(int id)
+        public Task DeleteAsync(int id)
         {
-            var solicitud = await GetByIdAsync(id);
+            var solicitud = _context.Solicitudes.Find(id);
             if (solicitud != null)
             {
                 _context.Solicitudes.Remove(solicitud);
-                await _context.SaveChangesAsync();
+                // No llamar a SaveChangesAsync aquí, lo maneja el UoW o el llamador
             }
+            return Task.CompletedTask;
         }
     }
 }

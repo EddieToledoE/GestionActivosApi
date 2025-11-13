@@ -2,7 +2,7 @@ using AutoMapper;
 using GestionActivos.Application.SolicitudApplication.DTOs;
 using GestionActivos.Domain.Entities;
 using GestionActivos.Domain.Exceptions;
-using GestionActivos.Domain.Interfaces;
+using GestionActivos.Domain.Interfaces.UnitsOfWork;
 using MediatR;
 
 namespace GestionActivos.Application.SolicitudApplication.Commands
@@ -11,20 +11,14 @@ namespace GestionActivos.Application.SolicitudApplication.Commands
 
     public class CreateSolicitudHandler : IRequestHandler<CreateSolicitudCommand, int>
     {
-        private readonly ISolicitudRepository _solicitudRepository;
-        private readonly IUsuarioRepository _usuarioRepository;
-        private readonly IActivoRepository _activoRepository;
+        private readonly IActivosUnitOfWork _uow;
         private readonly IMapper _mapper;
 
         public CreateSolicitudHandler(
-            ISolicitudRepository solicitudRepository,
-            IUsuarioRepository usuarioRepository,
-            IActivoRepository activoRepository,
+            IActivosUnitOfWork uow,
             IMapper mapper)
         {
-            _solicitudRepository = solicitudRepository;
-            _usuarioRepository = usuarioRepository;
-            _activoRepository = activoRepository;
+            _uow = uow;
             _mapper = mapper;
         }
 
@@ -40,7 +34,7 @@ namespace GestionActivos.Application.SolicitudApplication.Commands
             }
 
             // Validar que el emisor existe
-            var emisor = await _usuarioRepository.GetByIdAsync(request.Solicitud.IdEmisor);
+            var emisor = await _uow.Usuarios.GetByIdAsync(request.Solicitud.IdEmisor);
             if (emisor == null)
             {
                 throw new NotFoundException(
@@ -48,7 +42,7 @@ namespace GestionActivos.Application.SolicitudApplication.Commands
             }
 
             // Validar que el receptor existe
-            var receptor = await _usuarioRepository.GetByIdAsync(request.Solicitud.IdReceptor);
+            var receptor = await _uow.Usuarios.GetByIdAsync(request.Solicitud.IdReceptor);
             if (receptor == null)
             {
                 throw new NotFoundException(
@@ -56,7 +50,7 @@ namespace GestionActivos.Application.SolicitudApplication.Commands
             }
 
             // Validar que el activo existe
-            var activo = await _activoRepository.GetByIdAsync(request.Solicitud.IdActivo);
+            var activo = await _uow.Activos.GetByIdAsync(request.Solicitud.IdActivo);
             if (activo == null)
             {
                 throw new NotFoundException(
@@ -67,7 +61,8 @@ namespace GestionActivos.Application.SolicitudApplication.Commands
             var solicitud = _mapper.Map<Solicitud>(request.Solicitud);
 
             // Guardar la solicitud
-            await _solicitudRepository.AddAsync(solicitud);
+            await _uow.Solicitudes.AddAsync(solicitud);
+            await _uow.SaveChangesAsync();
 
             return solicitud.IdSolicitud;
         }

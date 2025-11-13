@@ -37,5 +37,36 @@ namespace GestionActivos.API.Controllers
             var solicitudes = await _mediator.Send(new GetSolicitudesPendientesByReceptorQuery(receptorId));
             return Ok(solicitudes);
         }
+
+        [HttpPut("{id}/aceptar")]
+        public async Task<IActionResult> Aceptar(int id, [FromBody] AceptarSolicitudRequest request)
+        {
+            await _mediator.Send(new AceptarSolicitudCommand(id, request.IdUsuarioAprobador));
+            return Ok(new { message = "Solicitud aceptada correctamente" });
+        }
+
+        [HttpPut("{id}/rechazar")]
+        public async Task<IActionResult> Rechazar(int id, [FromBody] RechazarSolicitudRequest request)
+        {
+            await _mediator.Send(new RechazarSolicitudCommand(id, request.IdUsuarioAprobador, request.MotivoRechazo));
+            return Ok(new { message = "Solicitud rechazada correctamente" });
+        }
+    }
+
+    /// <summary>
+    /// Request DTO para aceptar una solicitud
+    /// </summary>
+    public class AceptarSolicitudRequest
+    {
+        public int IdUsuarioAprobador { get; set; }
+    }
+
+    /// <summary>
+    /// Request DTO para rechazar una solicitud
+    /// </summary>
+    public class RechazarSolicitudRequest
+    {
+        public int IdUsuarioAprobador { get; set; }
+        public string? MotivoRechazo { get; set; }
     }
 }

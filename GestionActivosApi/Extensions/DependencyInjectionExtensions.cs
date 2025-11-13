@@ -1,6 +1,8 @@
 ﻿using GestionActivos.Domain.Interfaces;
+using GestionActivos.Domain.Interfaces.UnitsOfWork;
 using GestionActivos.Infrastructure.Repositories;
 using GestionActivos.Infrastructure.Services;
+using GestionActivos.Infrastructure.UnitsOfWork;
 
 namespace GestionActivos.API.Extensions
 {
@@ -16,6 +18,7 @@ namespace GestionActivos.API.Extensions
             services.AddScoped<ICategoriaRepository, CategoriaRepository>();
             services.AddScoped<IActivoRepository, ActivoRepository>();
             services.AddScoped<ISolicitudRepository, SolicitudRepository>();
+            services.AddScoped<IReubicacionRepository, ReubicacionRepository>();
 
             return services;
         }
@@ -24,7 +27,9 @@ namespace GestionActivos.API.Extensions
             this IServiceCollection services
         )
         {
-            // (En el futuro: registrar UnitOfWork)
+            // Units of Work
+            services.AddScoped<IActivosUnitOfWork, ActivosUnitOfWork>();
+
             return services;
         }
 

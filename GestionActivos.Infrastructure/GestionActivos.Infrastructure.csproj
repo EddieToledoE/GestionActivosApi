@@ -20,7 +20,4 @@
   <ItemGroup>
     <ProjectReference Include="..\GestionActivos.Domain\GestionActivos.Domain.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="UnitsOfWork\" />
-  </ItemGroup>
 </Project>

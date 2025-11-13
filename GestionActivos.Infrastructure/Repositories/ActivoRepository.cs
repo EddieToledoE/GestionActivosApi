@@ -42,13 +42,14 @@ namespace GestionActivos.Infrastructure.Repositories
         public async Task AddAsync(Activo activo)
         {
             await _context.Activos.AddAsync(activo);
-            await _context.SaveChangesAsync();
+            // No llamar a SaveChangesAsync aquí, lo maneja el UoW o el llamador
         }
 
-        public async Task UpdateAsync(Activo activo)
+        public Task UpdateAsync(Activo activo)
         {
             _context.Activos.Update(activo);
-            await _context.SaveChangesAsync();
+            // No llamar a SaveChangesAsync aquí, lo maneja el UoW o el llamador
+            return Task.CompletedTask;
         }
 
         public async Task DeleteAsync(int id)
@@ -57,7 +58,8 @@ namespace GestionActivos.Infrastructure.Repositories
             if (activo != null)
             {
                 activo.Estatus = "Inactivo";
-                await UpdateAsync(activo);
+                _context.Activos.Update(activo);
+                // No llamar a SaveChangesAsync aquí, lo maneja el UoW o el llamador
             }
         }
 
