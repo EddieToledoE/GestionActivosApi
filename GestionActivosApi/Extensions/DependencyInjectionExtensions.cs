@@ -19,6 +19,7 @@ namespace GestionActivos.API.Extensions
             services.AddScoped<IActivoRepository, ActivoRepository>();
             services.AddScoped<ISolicitudRepository, SolicitudRepository>();
             services.AddScoped<IReubicacionRepository, ReubicacionRepository>();
+            services.AddScoped<INotificacionRepository, NotificacionRepository>();
 
             return services;
         }

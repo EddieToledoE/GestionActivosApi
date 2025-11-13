@@ -27,6 +27,11 @@ namespace GestionActivos.Domain.Interfaces.UnitsOfWork
         IUsuarioRepository Usuarios { get; }
 
         /// <summary>
+        /// Repositorio de Notificaciones.
+        /// </summary>
+        INotificacionRepository Notificaciones { get; }
+
+        /// <summary>
         /// Guarda todos los cambios pendientes en el contexto.
         /// </summary>
         /// <returns>Número de entidades afectadas.</returns>

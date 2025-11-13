@@ -22,8 +22,8 @@ namespace GestionActivos.Infrastructure.Persistence
         public DbSet<ConfigAuditoria> ConfigAuditorias => Set<ConfigAuditoria>();
         public DbSet<Auditoria> Auditorias => Set<Auditoria>();
         public DbSet<DetalleAuditoria> DetallesAuditoria => Set<DetalleAuditoria>();
-
         public DbSet<CentroCosto> CentrosCosto => Set<CentroCosto>();
+        public DbSet<Notificacion> Notificaciones => Set<Notificacion>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

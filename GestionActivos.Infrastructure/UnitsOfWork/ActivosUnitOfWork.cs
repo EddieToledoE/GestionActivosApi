@@ -19,7 +19,8 @@ namespace GestionActivos.Infrastructure.UnitsOfWork
             IActivoRepository activoRepository,
             ISolicitudRepository solicitudRepository,
             IReubicacionRepository reubicacionRepository,
-            IUsuarioRepository usuarioRepository
+            IUsuarioRepository usuarioRepository,
+            INotificacionRepository notificacionRepository
         )
         {
             _context = context;
@@ -27,6 +28,7 @@ namespace GestionActivos.Infrastructure.UnitsOfWork
             Solicitudes = solicitudRepository;
             Reubicaciones = reubicacionRepository;
             Usuarios = usuarioRepository;
+            Notificaciones = notificacionRepository;
         }
 
         /// <summary>
@@ -48,6 +50,11 @@ namespace GestionActivos.Infrastructure.UnitsOfWork
         /// Repositorio de Usuarios.
         /// </summary>
         public IUsuarioRepository Usuarios { get; }
+
+        /// <summary>
+        /// Repositorio de Notificaciones.
+        /// </summary>
+        public INotificacionRepository Notificaciones { get; }
 
         /// <summary>
         /// Guarda todos los cambios pendientes en el contexto de la base de datos.
@@ -79,9 +86,7 @@ namespace GestionActivos.Infrastructure.UnitsOfWork
         {
             if (_transaction == null)
             {
-                throw new InvalidOperationException(
-                    "No hay una transacción activa para confirmar."
-                );
+                throw new InvalidOperationException("No hay una transacción activa para confirmar.");
             }
 
             try
