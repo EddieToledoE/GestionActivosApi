@@ -52,6 +52,12 @@ namespace GestionActivos.Infrastructure.Repositories
                 .ToListAsync();
         }
 
+        public async Task<bool> ExisteSolicitudPendienteParaActivoAsync(int idActivo)
+        {
+            return await _context.Solicitudes
+                .AnyAsync(s => s.IdActivo == idActivo && s.Estado == "Pendiente");
+        }
+
         public async Task AddAsync(Solicitud solicitud)
         {
             await _context.Solicitudes.AddAsync(solicitud);

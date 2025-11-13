@@ -33,7 +33,7 @@ namespace GestionActivos.Application.SolicitudApplication.Commands
                     "La solicitud no puede ser nula.");
             }
 
-            // Validar que el emisor existe
+            // 1. Validar que el emisor existe y está activo
             var emisor = await _uow.Usuarios.GetByIdAsync(request.Solicitud.IdEmisor);
             if (emisor == null)
             {
@@ -41,7 +41,13 @@ namespace GestionActivos.Application.SolicitudApplication.Commands
                     $"No se encontró el usuario emisor con ID {request.Solicitud.IdEmisor}.");
             }
 
-            // Validar que el receptor existe
+            if (!emisor.Activo)
+            {
+                throw new BusinessException(
+                    $"El usuario emisor '{emisor.Nombres} {emisor.ApellidoPaterno}' está inactivo y no puede crear solicitudes.");
+            }
+
+            // 2. Validar que el receptor existe y está activo
             var receptor = await _uow.Usuarios.GetByIdAsync(request.Solicitud.IdReceptor);
             if (receptor == null)
             {
@@ -49,12 +55,39 @@ namespace GestionActivos.Application.SolicitudApplication.Commands
                     $"No se encontró el usuario receptor con ID {request.Solicitud.IdReceptor}.");
             }
 
-            // Validar que el activo existe
+            if (!receptor.Activo)
+            {
+                throw new BusinessException(
+                    $"El usuario receptor '{receptor.Nombres} {receptor.ApellidoPaterno}' está inactivo y no puede recibir solicitudes.");
+            }
+
+            // 3. Validar que el activo existe y está activo
             var activo = await _uow.Activos.GetByIdAsync(request.Solicitud.IdActivo);
             if (activo == null)
             {
                 throw new NotFoundException(
                     $"No se encontró el activo con ID {request.Solicitud.IdActivo}.");
+            }
+
+            if (activo.Estatus != "Activo")
+            {
+                throw new BusinessException(
+                    $"El activo '{activo.Etiqueta}' no está activo (Estado: {activo.Estatus}). Solo se pueden crear solicitudes para activos activos.");
+            }
+
+            // 4. Validar que no exista una solicitud pendiente para este activo
+            var existeSolicitudPendiente = await _uow.Solicitudes.ExisteSolicitudPendienteParaActivoAsync(request.Solicitud.IdActivo);
+            if (existeSolicitudPendiente)
+            {
+                throw new BusinessException(
+                    $"Ya existe una solicitud pendiente para el activo '{activo.Etiqueta}'. No se pueden crear solicitudes duplicadas hasta que la anterior sea procesada.");
+            }
+
+            // 5. Validar que el emisor sea el responsable actual del activo (opcional, depende de tu regla de negocio)
+            if (activo.ResponsableId != request.Solicitud.IdEmisor)
+            {
+                throw new BusinessException(
+                    $"Solo el responsable actual del activo '{activo.Etiqueta}' puede crear una solicitud de transferencia. Responsable actual: ID {activo.ResponsableId}");
             }
 
             // Mapear el DTO a la entidad

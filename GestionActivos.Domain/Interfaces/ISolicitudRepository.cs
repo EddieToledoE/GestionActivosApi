@@ -8,6 +8,7 @@ namespace GestionActivos.Domain.Interfaces
         Task<IEnumerable<Solicitud>> GetAllAsync();
         Task<IEnumerable<Solicitud>> GetByEmisorIdAsync(int emisorId);
         Task<IEnumerable<Solicitud>> GetByReceptorIdAsync(int receptorId);
+        Task<bool> ExisteSolicitudPendienteParaActivoAsync(int idActivo);
         Task AddAsync(Solicitud solicitud);
         Task UpdateAsync(Solicitud solicitud);
         Task DeleteAsync(int id);
