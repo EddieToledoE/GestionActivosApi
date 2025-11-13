@@ -32,6 +32,13 @@ namespace GestionActivos.Application.UsuarioApplication.Queries
                 throw new NotFoundException($"No se encontró ningún usuario con la clave Fortia '{request.ClaveFortia}'.");
             }
 
+            // Validar si el usuario está inactivo
+            if (!usuario.Activo)
+            {
+                throw new BusinessException(
+                    $"El usuario con clave Fortia '{request.ClaveFortia}' ({usuario.Nombres} {usuario.ApellidoPaterno}) está inactivo.");
+            }
+
             // Construir nombre completo
             var nombreCompleto = $"{usuario.Nombres} {usuario.ApellidoPaterno}";
             if (!string.IsNullOrWhiteSpace(usuario.ApellidoMaterno))
