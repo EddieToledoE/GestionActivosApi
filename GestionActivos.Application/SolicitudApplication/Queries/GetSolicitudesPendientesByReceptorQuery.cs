@@ -5,7 +5,7 @@ using MediatR;
 
 namespace GestionActivos.Application.SolicitudApplication.Queries
 {
-    public record GetSolicitudesPendientesByReceptorQuery(int ReceptorId) : IRequest<IEnumerable<SolicitudDto>>;
+    public record GetSolicitudesPendientesByReceptorQuery(Guid ReceptorId) : IRequest<IEnumerable<SolicitudDto>>;
 
     public class GetSolicitudesPendientesByReceptorHandler : IRequestHandler<GetSolicitudesPendientesByReceptorQuery, IEnumerable<SolicitudDto>>
     {

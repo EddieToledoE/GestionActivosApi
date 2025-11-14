@@ -32,7 +32,7 @@ namespace GestionActivos.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Reubicacion>> GetByActivoIdAsync(int activoId)
+        public async Task<IEnumerable<Reubicacion>> GetByActivoIdAsync(Guid activoId)
         {
             return await _context.Reubicaciones
                 .Include(r => r.Activo)
@@ -43,7 +43,7 @@ namespace GestionActivos.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Reubicacion>> GetByUsuarioAsync(int usuarioId)
+        public async Task<IEnumerable<Reubicacion>> GetByUsuarioAsync(Guid usuarioId)
         {
             return await _context.Reubicaciones
                 .Include(r => r.Activo)

@@ -6,7 +6,7 @@ using MediatR;
 
 namespace GestionActivos.Application.ActivoApplication.Queries
 {
-    public record GetActivoByIdQuery(int Id) : IRequest<ActivoDto>;
+    public record GetActivoByIdQuery(Guid Id) : IRequest<ActivoDto>;
 
     public class GetActivoByIdHandler : IRequestHandler<GetActivoByIdQuery, ActivoDto>
     {
@@ -15,23 +15,23 @@ namespace GestionActivos.Application.ActivoApplication.Queries
 
         public GetActivoByIdHandler(IActivoRepository activoRepository, IMapper mapper)
         {
-        _activoRepository = activoRepository;
-   _mapper = mapper;
+            _activoRepository = activoRepository;
+            _mapper = mapper;
         }
 
-     public async Task<ActivoDto> Handle(
-  GetActivoByIdQuery request,
+        public async Task<ActivoDto> Handle(
+            GetActivoByIdQuery request,
             CancellationToken cancellationToken
         )
         {
             var activo = await _activoRepository.GetByIdAsync(request.Id);
 
-   if (activo == null)
+            if (activo == null)
             {
-    throw new NotFoundException($"No se encontró el activo con ID {request.Id}.");
-       }
+                throw new NotFoundException($"No se encontró el activo con ID {request.Id}.");
+            }
 
-   return _mapper.Map<ActivoDto>(activo);
+            return _mapper.Map<ActivoDto>(activo);
         }
     }
 }

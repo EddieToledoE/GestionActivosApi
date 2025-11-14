@@ -14,7 +14,7 @@ namespace GestionActivos.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<Solicitud?> GetByIdAsync(int id)
+        public async Task<Solicitud?> GetByIdAsync(Guid id)
         {
             return await _context.Solicitudes
                 .Include(s => s.Emisor)
@@ -32,7 +32,7 @@ namespace GestionActivos.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Solicitud>> GetByEmisorIdAsync(int emisorId)
+        public async Task<IEnumerable<Solicitud>> GetByEmisorIdAsync(Guid emisorId)
         {
             return await _context.Solicitudes
                 .Include(s => s.Emisor)
@@ -42,7 +42,7 @@ namespace GestionActivos.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Solicitud>> GetByReceptorIdAsync(int receptorId)
+        public async Task<IEnumerable<Solicitud>> GetByReceptorIdAsync(Guid receptorId)
         {
             return await _context.Solicitudes
                 .Include(s => s.Emisor)
@@ -52,7 +52,7 @@ namespace GestionActivos.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<bool> ExisteSolicitudPendienteParaActivoAsync(int idActivo)
+        public async Task<bool> ExisteSolicitudPendienteParaActivoAsync(Guid idActivo)
         {
             return await _context.Solicitudes
                 .AnyAsync(s => s.IdActivo == idActivo && s.Estado == "Pendiente");
@@ -61,25 +61,30 @@ namespace GestionActivos.Infrastructure.Repositories
         public async Task AddAsync(Solicitud solicitud)
         {
             await _context.Solicitudes.AddAsync(solicitud);
-            // No llamar a SaveChangesAsync aquí, lo maneja el UoW o el llamador
+            // Nota: SaveChanges se maneja en Unit of Work para transacciones
         }
 
         public Task UpdateAsync(Solicitud solicitud)
         {
             _context.Solicitudes.Update(solicitud);
-            // No llamar a SaveChangesAsync aquí, lo maneja el UoW o el llamador
+            // Nota: SaveChanges se maneja en Unit of Work para transacciones
             return Task.CompletedTask;
         }
 
-        public Task DeleteAsync(int id)
+        public Task DeleteAsync(Guid id)
         {
             var solicitud = _context.Solicitudes.Find(id);
             if (solicitud != null)
             {
                 _context.Solicitudes.Remove(solicitud);
-                // No llamar a SaveChangesAsync aquí, lo maneja el UoW o el llamador
+                // Nota: SaveChanges se maneja en Unit of Work para transacciones
             }
             return Task.CompletedTask;
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
         }
     }
 }

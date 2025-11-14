@@ -11,17 +11,17 @@ namespace GestionActivos.Application.ReubicacionApplication.Commands
         /// <summary>
         /// ID del auditor que realiza la transferencia.
         /// </summary>
-        public int IdAuditor { get; init; }
+        public Guid IdAuditor { get; init; }
 
         /// <summary>
         /// ID del activo que se va a transferir.
         /// </summary>
-        public int IdActivo { get; init; }
+        public Guid IdActivo { get; init; }
 
         /// <summary>
         /// ID del usuario destino que recibirá el activo.
         /// </summary>
-        public int IdUsuarioDestino { get; init; }
+        public Guid IdUsuarioDestino { get; init; }
 
         /// <summary>
         /// Motivo de la transferencia.

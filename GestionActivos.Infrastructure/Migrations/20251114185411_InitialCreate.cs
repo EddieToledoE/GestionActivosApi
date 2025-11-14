@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace GestionActivos.Infrastructure.Persistence.Migrations
+namespace GestionActivos.Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -25,6 +25,23 @@ namespace GestionActivos.Infrastructure.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CAT_CATEGORIA", x => x.IdCategoria);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CAT_CENTRO_COSTO",
+                columns: table => new
+                {
+                    IdCentroCosto = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Ubicacion = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
+                    RazonSocial = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
+                    Area = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Activo = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    FechaCreacion = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CAT_CENTRO_COSTO", x => x.IdCentroCosto);
                 });
 
             migrationBuilder.CreateTable(
@@ -57,19 +74,25 @@ namespace GestionActivos.Infrastructure.Persistence.Migrations
                 name: "CAT_USUARIO",
                 columns: table => new
                 {
-                    IdUsuario = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IdUsuario = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Nombres = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     ApellidoPaterno = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     ApellidoMaterno = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     ClaveFortia = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     Correo = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     Contrasena = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Activo = table.Column<bool>(type: "bit", nullable: false, defaultValue: true)
+                    Activo = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    IdCentroCosto = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CAT_USUARIO", x => x.IdUsuario);
+                    table.ForeignKey(
+                        name: "FK_CAT_USUARIO_CAT_CENTRO_COSTO_IdCentroCosto",
+                        column: x => x.IdCentroCosto,
+                        principalTable: "CAT_CENTRO_COSTO",
+                        principalColumn: "IdCentroCosto",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -105,7 +128,7 @@ namespace GestionActivos.Infrastructure.Persistence.Migrations
                     Periodo = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
                     FechaInicio = table.Column<DateTime>(type: "datetime2", nullable: true),
                     FechaFin = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IdResponsable = table.Column<int>(type: "int", nullable: false)
+                    IdResponsable = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -122,11 +145,9 @@ namespace GestionActivos.Infrastructure.Persistence.Migrations
                 name: "MOV_ACTIVO",
                 columns: table => new
                 {
-                    IdActivo = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Imagen = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
-                    Categoria = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    ResponsableId = table.Column<int>(type: "int", nullable: false),
+                    IdActivo = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ImagenUrl = table.Column<string>(type: "nvarchar(400)", maxLength: 400, nullable: true),
+                    ResponsableId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IdCategoria = table.Column<int>(type: "int", nullable: false),
                     Marca = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     Modelo = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
@@ -134,12 +155,15 @@ namespace GestionActivos.Infrastructure.Persistence.Migrations
                     Etiqueta = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     NumeroSerie = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     Donacion = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    Factura = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    ValorAdquisicion = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    FacturaPDF = table.Column<string>(type: "nvarchar(400)", maxLength: 400, nullable: true),
+                    FacturaXML = table.Column<string>(type: "nvarchar(400)", maxLength: 400, nullable: true),
+                    CuentaContable = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    ValorAdquisicion = table.Column<decimal>(type: "decimal(12,2)", precision: 12, scale: 2, nullable: true),
                     Estatus = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false, defaultValue: "Activo"),
                     FechaAdquisicion = table.Column<DateTime>(type: "datetime2", nullable: true),
                     FechaAlta = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
-                    PortaEtiqueta = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
+                    PortaEtiqueta = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CuentaContableEtiqueta = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
                 {
@@ -162,11 +186,10 @@ namespace GestionActivos.Infrastructure.Persistence.Migrations
                 name: "MOV_AUDITORIA",
                 columns: table => new
                 {
-                    IdAuditoria = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IdAuditoria = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Tipo = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    IdAuditor = table.Column<int>(type: "int", nullable: false),
-                    IdUsuarioAuditado = table.Column<int>(type: "int", nullable: false),
+                    IdAuditor = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IdUsuarioAuditado = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Fecha = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     Observaciones = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -188,30 +211,25 @@ namespace GestionActivos.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "MOV_SOLICITUD",
+                name: "MOV_NOTIFICACION",
                 columns: table => new
                 {
-                    IdSolicitud = table.Column<int>(type: "int", nullable: false)
+                    IdNotificacion = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    IdEmisor = table.Column<int>(type: "int", nullable: false),
-                    IdReceptor = table.Column<int>(type: "int", nullable: false),
+                    IdUsuarioDestino = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Origen = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     Tipo = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Mensaje = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
+                    Titulo = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    Mensaje = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     Fecha = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
-                    Estado = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false, defaultValue: "Pendiente")
+                    Leida = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MOV_SOLICITUD", x => x.IdSolicitud);
+                    table.PrimaryKey("PK_MOV_NOTIFICACION", x => x.IdNotificacion);
                     table.ForeignKey(
-                        name: "FK_MOV_SOLICITUD_CAT_USUARIO_IdEmisor",
-                        column: x => x.IdEmisor,
-                        principalTable: "CAT_USUARIO",
-                        principalColumn: "IdUsuario",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_MOV_SOLICITUD_CAT_USUARIO_IdReceptor",
-                        column: x => x.IdReceptor,
+                        name: "FK_MOV_NOTIFICACION_CAT_USUARIO_IdUsuarioDestino",
+                        column: x => x.IdUsuarioDestino,
                         principalTable: "CAT_USUARIO",
                         principalColumn: "IdUsuario",
                         onDelete: ReferentialAction.Restrict);
@@ -221,7 +239,7 @@ namespace GestionActivos.Infrastructure.Persistence.Migrations
                 name: "MOV_USUARIO_ROL",
                 columns: table => new
                 {
-                    IdUsuario = table.Column<int>(type: "int", nullable: false),
+                    IdUsuario = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IdRol = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -247,9 +265,9 @@ namespace GestionActivos.Infrastructure.Persistence.Migrations
                 {
                     IdReubicacion = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    IdActivo = table.Column<int>(type: "int", nullable: false),
-                    IdUsuarioAnterior = table.Column<int>(type: "int", nullable: false),
-                    IdUsuarioNuevo = table.Column<int>(type: "int", nullable: false),
+                    IdActivo = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IdUsuarioAnterior = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IdUsuarioNuevo = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Fecha = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     Motivo = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true)
                 },
@@ -282,14 +300,10 @@ namespace GestionActivos.Infrastructure.Persistence.Migrations
                 {
                     IdDiagnostico = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    IdActivo = table.Column<int>(type: "int", nullable: false),
-                    IdTecnico = table.Column<int>(type: "int", nullable: false),
+                    IdActivo = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IdTecnico = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Fecha = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
-                    Pieza = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    ValorAdquisicion = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    TramiteGarantia = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    SugerirBaja = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    Motivo = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    Tipo = table.Column<string>(type: "nvarchar(50)", nullable: false),
                     Observaciones = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -310,13 +324,49 @@ namespace GestionActivos.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "MOV_SOLICITUD",
+                columns: table => new
+                {
+                    IdSolicitud = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IdEmisor = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IdReceptor = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IdActivo = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Tipo = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Mensaje = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
+                    Fecha = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
+                    Estado = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false, defaultValue: "Pendiente")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MOV_SOLICITUD", x => x.IdSolicitud);
+                    table.ForeignKey(
+                        name: "FK_MOV_SOLICITUD_CAT_USUARIO_IdEmisor",
+                        column: x => x.IdEmisor,
+                        principalTable: "CAT_USUARIO",
+                        principalColumn: "IdUsuario",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_MOV_SOLICITUD_CAT_USUARIO_IdReceptor",
+                        column: x => x.IdReceptor,
+                        principalTable: "CAT_USUARIO",
+                        principalColumn: "IdUsuario",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_MOV_SOLICITUD_MOV_ACTIVO_IdActivo",
+                        column: x => x.IdActivo,
+                        principalTable: "MOV_ACTIVO",
+                        principalColumn: "IdActivo",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "H_DETALLE_AUDITORIA",
                 columns: table => new
                 {
                     IdDetalle = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    IdAuditoria = table.Column<int>(type: "int", nullable: false),
-                    IdActivo = table.Column<int>(type: "int", nullable: false),
+                    IdAuditoria = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IdActivo = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Estado = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Comentarios = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true)
                 },
@@ -353,6 +403,11 @@ namespace GestionActivos.Infrastructure.Persistence.Migrations
                 column: "ClaveFortia",
                 unique: true,
                 filter: "[ClaveFortia] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CAT_USUARIO_IdCentroCosto",
+                table: "CAT_USUARIO",
+                column: "IdCentroCosto");
 
             migrationBuilder.CreateIndex(
                 name: "IX_H_DETALLE_AUDITORIA_IdActivo",
@@ -417,6 +472,16 @@ namespace GestionActivos.Infrastructure.Persistence.Migrations
                 column: "IdTecnico");
 
             migrationBuilder.CreateIndex(
+                name: "IX_MOV_NOTIFICACION_IdUsuarioDestino",
+                table: "MOV_NOTIFICACION",
+                column: "IdUsuarioDestino");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MOV_SOLICITUD_IdActivo",
+                table: "MOV_SOLICITUD",
+                column: "IdActivo");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_MOV_SOLICITUD_IdEmisor",
                 table: "MOV_SOLICITUD",
                 column: "IdEmisor");
@@ -451,6 +516,9 @@ namespace GestionActivos.Infrastructure.Persistence.Migrations
                 name: "MOV_DIAGNOSTICO");
 
             migrationBuilder.DropTable(
+                name: "MOV_NOTIFICACION");
+
+            migrationBuilder.DropTable(
                 name: "MOV_SOLICITUD");
 
             migrationBuilder.DropTable(
@@ -473,6 +541,9 @@ namespace GestionActivos.Infrastructure.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "CAT_USUARIO");
+
+            migrationBuilder.DropTable(
+                name: "CAT_CENTRO_COSTO");
         }
     }
 }

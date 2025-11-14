@@ -14,7 +14,7 @@ namespace GestionActivos.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<Activo?> GetByIdAsync(int id)
+        public async Task<Activo?> GetByIdAsync(Guid id)
         {
             return await _context
                 .Activos.Include(a => a.Responsable)
@@ -30,7 +30,7 @@ namespace GestionActivos.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Activo>> GetByResponsableIdAsync(int responsableId)
+        public async Task<IEnumerable<Activo>> GetByResponsableIdAsync(Guid responsableId)
         {
             return await _context
                 .Activos.Include(a => a.Responsable)
@@ -42,24 +42,23 @@ namespace GestionActivos.Infrastructure.Repositories
         public async Task AddAsync(Activo activo)
         {
             await _context.Activos.AddAsync(activo);
-            // No llamar a SaveChangesAsync aquí, lo maneja el UoW o el llamador
+            await _context.SaveChangesAsync();
         }
 
-        public Task UpdateAsync(Activo activo)
+        public async Task UpdateAsync(Activo activo)
         {
             _context.Activos.Update(activo);
-            // No llamar a SaveChangesAsync aquí, lo maneja el UoW o el llamador
-            return Task.CompletedTask;
+            await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(Guid id)
         {
             var activo = await GetByIdAsync(id);
             if (activo != null)
             {
                 activo.Estatus = "Inactivo";
                 _context.Activos.Update(activo);
-                // No llamar a SaveChangesAsync aquí, lo maneja el UoW o el llamador
+                await _context.SaveChangesAsync();
             }
         }
 

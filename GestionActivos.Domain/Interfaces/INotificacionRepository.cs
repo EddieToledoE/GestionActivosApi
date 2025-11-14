@@ -20,12 +20,12 @@ namespace GestionActivos.Domain.Interfaces
         /// <summary>
         /// Obtiene todas las notificaciones de un usuario específico.
         /// </summary>
-        Task<IEnumerable<Notificacion>> GetByUsuarioIdAsync(int usuarioId);
+        Task<IEnumerable<Notificacion>> GetByUsuarioIdAsync(Guid usuarioId);
 
         /// <summary>
         /// Obtiene las notificaciones no leídas de un usuario.
         /// </summary>
-        Task<IEnumerable<Notificacion>> GetNoLeidasByUsuarioIdAsync(int usuarioId);
+        Task<IEnumerable<Notificacion>> GetNoLeidasByUsuarioIdAsync(Guid usuarioId);
 
         /// <summary>
         /// Agrega una nueva notificación.

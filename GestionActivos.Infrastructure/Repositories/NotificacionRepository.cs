@@ -32,7 +32,7 @@ namespace GestionActivos.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Notificacion>> GetByUsuarioIdAsync(int usuarioId)
+        public async Task<IEnumerable<Notificacion>> GetByUsuarioIdAsync(Guid usuarioId)
         {
             return await _context.Notificaciones
                 .Include(n => n.UsuarioDestino)
@@ -41,7 +41,7 @@ namespace GestionActivos.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Notificacion>> GetNoLeidasByUsuarioIdAsync(int usuarioId)
+        public async Task<IEnumerable<Notificacion>> GetNoLeidasByUsuarioIdAsync(Guid usuarioId)
         {
             return await _context.Notificaciones
                 .Include(n => n.UsuarioDestino)

@@ -5,7 +5,7 @@ namespace GestionActivos.Application.ActivoApplication.DTOs
     public class CreateActivoDto
     {
         public IFormFile? Imagen { get; set; }
-        public int ResponsableId { get; set; }
+        public Guid ResponsableId { get; set; }
         public int IdCategoria { get; set; }
         public string? Marca { get; set; }
         public string? Modelo { get; set; }

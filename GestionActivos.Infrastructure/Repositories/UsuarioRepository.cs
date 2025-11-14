@@ -14,7 +14,7 @@ namespace GestionActivos.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<Usuario?> GetByIdAsync(int id) => await _context.Usuarios.FindAsync(id);
+        public async Task<Usuario?> GetByIdAsync(Guid id) => await _context.Usuarios.FindAsync(id);
 
         public async Task<Usuario?> GetByCorreoAsync(string correo) =>
             await _context.Usuarios.FirstOrDefaultAsync(u => u.Correo == correo);

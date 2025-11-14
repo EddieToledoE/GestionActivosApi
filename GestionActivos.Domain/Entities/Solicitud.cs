@@ -2,10 +2,10 @@
 {
     public class Solicitud
     {
-        public int IdSolicitud { get; set; }
-        public int IdEmisor { get; set; }
-        public int IdReceptor { get; set; }
-        public int IdActivo { get; set; }
+        public Guid IdSolicitud { get; set; } = Guid.NewGuid();
+        public Guid IdEmisor { get; set; }
+        public Guid IdReceptor { get; set; }
+        public Guid IdActivo { get; set; }
         public string Tipo { get; set; } = string.Empty; // Transferencia / Baja / Diagnóstico / Auditoría
         public string? Mensaje { get; set; }
         public DateTime Fecha { get; set; } = DateTime.Now;

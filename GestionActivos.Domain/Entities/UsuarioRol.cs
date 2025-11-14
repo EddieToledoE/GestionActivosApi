@@ -2,7 +2,7 @@
 {
     public class UsuarioRol
     {
-        public int IdUsuario { get; set; }
+        public Guid IdUsuario { get; set; }
         public int IdRol { get; set; }
 
         public Usuario Usuario { get; set; } = null!;

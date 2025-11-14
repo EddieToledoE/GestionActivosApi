@@ -6,7 +6,7 @@ namespace GestionActivos.Domain.Interfaces
 {
     public interface IUsuarioRepository
     {
-        Task<Usuario?> GetByIdAsync(int id);
+        Task<Usuario?> GetByIdAsync(Guid id);
         Task<Usuario?> GetByCorreoAsync(string correo);
         Task<Usuario?> GetByClaveFortiaAsync(string claveFortia);
         Task<IEnumerable<Usuario>> GetAllAsync();

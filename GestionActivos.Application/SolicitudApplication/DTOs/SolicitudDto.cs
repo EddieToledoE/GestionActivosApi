@@ -2,12 +2,12 @@ namespace GestionActivos.Application.SolicitudApplication.DTOs
 {
     public class SolicitudDto
     {
-        public int IdSolicitud { get; set; }
-        public int IdEmisor { get; set; }
+        public Guid IdSolicitud { get; set; }
+        public Guid IdEmisor { get; set; }
         public string NombreEmisor { get; set; } = string.Empty;
-        public int IdReceptor { get; set; }
+        public Guid IdReceptor { get; set; }
         public string NombreReceptor { get; set; } = string.Empty;
-        public int IdActivo { get; set; }
+        public Guid IdActivo { get; set; }
         public string? EtiquetaActivo { get; set; }
         public string? DescripcionActivo { get; set; }
         public string Tipo { get; set; } = string.Empty;

@@ -4,12 +4,13 @@ using GestionActivos.Domain.Entities;
 using GestionActivos.Domain.Exceptions;
 using GestionActivos.Domain.Interfaces;
 using MediatR;
+using System;
 
 namespace GestionActivos.Application.UsuarioApplication.Commands
 {
-    public record CreateUsuarioCommand(CreateUsuarioDto Usuario) : IRequest<int>;
+    public record CreateUsuarioCommand(CreateUsuarioDto Usuario) : IRequest<Guid>;
 
-    public class CreateUsuarioHandler : IRequestHandler<CreateUsuarioCommand, int>
+    public class CreateUsuarioHandler : IRequestHandler<CreateUsuarioCommand, Guid>
     {
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly IMapper _mapper;
@@ -20,7 +21,7 @@ namespace GestionActivos.Application.UsuarioApplication.Commands
             _mapper = mapper;
         }
 
-        public async Task<int> Handle(
+        public async Task<Guid> Handle(
             CreateUsuarioCommand request,
             CancellationToken cancellationToken
         )

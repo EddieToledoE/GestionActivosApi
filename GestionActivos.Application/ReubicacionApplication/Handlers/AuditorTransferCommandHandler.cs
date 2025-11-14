@@ -54,7 +54,7 @@ namespace GestionActivos.Application.ReubicacionApplication.Handlers
                 }
 
                 // 3. Obtener y validar usuario anterior (responsable actual)
-                int idUsuarioAnterior = activo.ResponsableId;
+                Guid idUsuarioAnterior = activo.ResponsableId;
                 var usuarioAnterior = await _uow.Usuarios.GetByIdAsync(idUsuarioAnterior);
                 if (usuarioAnterior == null)
                 {

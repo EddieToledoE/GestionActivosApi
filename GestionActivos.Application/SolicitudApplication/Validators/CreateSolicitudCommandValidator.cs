@@ -8,20 +8,20 @@ namespace GestionActivos.Application.SolicitudApplication.Validators
         public CreateSolicitudCommandValidator()
         {
             RuleFor(x => x.IdEmisor)
-                .GreaterThan(0)
-                .WithMessage("El ID del emisor es obligatorio y debe ser mayor a 0.");
+                .NotEmpty()
+                .WithMessage("El ID del emisor es obligatorio.");
 
             RuleFor(x => x.IdReceptor)
-                .GreaterThan(0)
-                .WithMessage("El ID del receptor es obligatorio y debe ser mayor a 0.");
+                .NotEmpty()
+                .WithMessage("El ID del receptor es obligatorio.");
 
             RuleFor(x => x.IdReceptor)
                 .NotEqual(x => x.IdEmisor)
                 .WithMessage("El receptor no puede ser el mismo que el emisor.");
 
             RuleFor(x => x.IdActivo)
-                .GreaterThan(0)
-                .WithMessage("El ID del activo es obligatorio y debe ser mayor a 0.");
+                .NotEmpty()
+                .WithMessage("El ID del activo es obligatorio.");
 
             RuleFor(x => x.Tipo)
                 .NotEmpty()

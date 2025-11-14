@@ -11,16 +11,16 @@ namespace GestionActivos.Application.ReubicacionApplication.Validators
         public AuditorTransferCommandValidator()
         {
             RuleFor(x => x.IdAuditor)
-                .GreaterThan(0)
-                .WithMessage("El ID del auditor es obligatorio y debe ser mayor a 0.");
+                .NotEmpty()
+                .WithMessage("El ID del auditor es obligatorio.");
 
             RuleFor(x => x.IdActivo)
-                .GreaterThan(0)
-                .WithMessage("El ID del activo es obligatorio y debe ser mayor a 0.");
+                .NotEmpty()
+                .WithMessage("El ID del activo es obligatorio.");
 
             RuleFor(x => x.IdUsuarioDestino)
-                .GreaterThan(0)
-                .WithMessage("El ID del usuario destino es obligatorio y debe ser mayor a 0.");
+                .NotEmpty()
+                .WithMessage("El ID del usuario destino es obligatorio.");
 
             RuleFor(x => x.Motivo)
                 .NotEmpty()

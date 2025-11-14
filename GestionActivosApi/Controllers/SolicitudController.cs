@@ -24,29 +24,29 @@ namespace GestionActivos.API.Controllers
             return Ok(new { message = "Solicitud creada correctamente", id });
         }
 
-        [HttpGet("pendientes/emisor/{emisorId}")]
-        public async Task<IActionResult> GetPendientesByEmisor(int emisorId)
+        [HttpGet("pendientes/emisor/{emisorId:guid}")]
+        public async Task<IActionResult> GetPendientesByEmisor(Guid emisorId)
         {
             var solicitudes = await _mediator.Send(new GetSolicitudesPendientesByEmisorQuery(emisorId));
             return Ok(solicitudes);
         }
 
-        [HttpGet("pendientes/receptor/{receptorId}")]
-        public async Task<IActionResult> GetPendientesByReceptor(int receptorId)
+        [HttpGet("pendientes/receptor/{receptorId:guid}")]
+        public async Task<IActionResult> GetPendientesByReceptor(Guid receptorId)
         {
             var solicitudes = await _mediator.Send(new GetSolicitudesPendientesByReceptorQuery(receptorId));
             return Ok(solicitudes);
         }
 
-        [HttpPut("{id}/aceptar")]
-        public async Task<IActionResult> Aceptar(int id, [FromBody] AceptarSolicitudRequest request)
+        [HttpPut("{id:guid}/aceptar")]
+        public async Task<IActionResult> Aceptar(Guid id, [FromBody] AceptarSolicitudRequest request)
         {
             await _mediator.Send(new AceptarSolicitudCommand(id, request.IdUsuarioAprobador));
             return Ok(new { message = "Solicitud aceptada correctamente" });
         }
 
-        [HttpPut("{id}/rechazar")]
-        public async Task<IActionResult> Rechazar(int id, [FromBody] RechazarSolicitudRequest request)
+        [HttpPut("{id:guid}/rechazar")]
+        public async Task<IActionResult> Rechazar(Guid id, [FromBody] RechazarSolicitudRequest request)
         {
             await _mediator.Send(new RechazarSolicitudCommand(id, request.IdUsuarioAprobador, request.MotivoRechazo));
             return Ok(new { message = "Solicitud rechazada correctamente" });
@@ -58,7 +58,7 @@ namespace GestionActivos.API.Controllers
     /// </summary>
     public class AceptarSolicitudRequest
     {
-        public int IdUsuarioAprobador { get; set; }
+        public Guid IdUsuarioAprobador { get; set; }
     }
 
     /// <summary>
@@ -66,7 +66,7 @@ namespace GestionActivos.API.Controllers
     /// </summary>
     public class RechazarSolicitudRequest
     {
-        public int IdUsuarioAprobador { get; set; }
+        public Guid IdUsuarioAprobador { get; set; }
         public string? MotivoRechazo { get; set; }
     }
 }

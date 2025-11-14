@@ -8,8 +8,8 @@ namespace GestionActivos.Application.ActivoApplication.Validators
         public CreateActivoCommandValidator()
         {
             RuleFor(x => x.ResponsableId)
- .GreaterThan(0)
-         .WithMessage("El responsable es obligatorio.");
+                .NotEmpty()
+                .WithMessage("El responsable es obligatorio.");
 
             RuleFor(x => x.IdCategoria)
               .GreaterThan(0)

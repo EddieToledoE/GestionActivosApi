@@ -2,9 +2,9 @@ namespace GestionActivos.Application.ActivoApplication.DTOs
 {
     public class ActivoDto
     {
-        public int IdActivo { get; set; }
+        public Guid IdActivo { get; set; }
         public string? ImagenUrl { get; set; }
-        public int ResponsableId { get; set; }
+        public Guid ResponsableId { get; set; }
         public int IdCategoria { get; set; }
         public string? Marca { get; set; }
         public string? Modelo { get; set; }

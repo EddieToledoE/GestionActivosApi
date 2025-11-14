@@ -8,7 +8,7 @@ namespace GestionActivos.Application.SolicitudApplication.Commands
     /// <summary>
     /// Comando para aceptar una solicitud de transferencia de activo.
     /// </summary>
-    public record AceptarSolicitudCommand(int IdSolicitud, int IdUsuarioAprobador) : IRequest<bool>;
+    public record AceptarSolicitudCommand(Guid IdSolicitud, Guid IdUsuarioAprobador) : IRequest<bool>;
 
     public class AceptarSolicitudHandler : IRequestHandler<AceptarSolicitudCommand, bool>
     {

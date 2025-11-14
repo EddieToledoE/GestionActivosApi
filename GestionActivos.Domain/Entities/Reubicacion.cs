@@ -3,9 +3,9 @@
     public class Reubicacion
     {
         public int IdReubicacion { get; set; }
-        public int IdActivo { get; set; }
-        public int IdUsuarioAnterior { get; set; }
-        public int IdUsuarioNuevo { get; set; }
+        public Guid IdActivo { get; set; }
+        public Guid IdUsuarioAnterior { get; set; }
+        public Guid IdUsuarioNuevo { get; set; }
         public DateTime Fecha { get; set; } = DateTime.Now;
         public string? Motivo { get; set; }
 

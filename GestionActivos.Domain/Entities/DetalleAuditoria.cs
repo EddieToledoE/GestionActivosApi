@@ -3,8 +3,8 @@
     public class DetalleAuditoria
     {
         public int IdDetalle { get; set; }
-        public int IdAuditoria { get; set; }
-        public int IdActivo { get; set; }
+        public Guid IdAuditoria { get; set; }
+        public Guid IdActivo { get; set; }
         public string Estado { get; set; } = string.Empty; // Encontrado / Faltante / Dañado
         public string? Comentarios { get; set; }
 

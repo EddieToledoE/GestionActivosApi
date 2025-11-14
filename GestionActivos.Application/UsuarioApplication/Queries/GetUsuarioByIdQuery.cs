@@ -6,7 +6,7 @@ using MediatR;
 
 namespace GestionActivos.Application.UsuarioApplication.Queries
 {
-    public record GetUsuarioByIdQuery(int IdUsuario) : IRequest<UsuarioDto>;
+    public record GetUsuarioByIdQuery(Guid IdUsuario) : IRequest<UsuarioDto>;
 
     public class GetUsuarioByIdHandler : IRequestHandler<GetUsuarioByIdQuery, UsuarioDto>
     {
@@ -24,9 +24,9 @@ namespace GestionActivos.Application.UsuarioApplication.Queries
             CancellationToken cancellationToken
         )
         {
-            if (request.IdUsuario <= 0)
+            if (request.IdUsuario == Guid.Empty)
             {
-                throw new BusinessException("El ID del usuario debe ser mayor que 0.");
+                throw new BusinessException("El ID del usuario no puede ser vacío.");
             }
 
             var usuario = await _usuarioRepository.GetByIdAsync(request.IdUsuario);

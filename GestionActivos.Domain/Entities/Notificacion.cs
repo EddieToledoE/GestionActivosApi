@@ -4,7 +4,7 @@
     {
         public int IdNotificacion { get; set; }
 
-        public int IdUsuarioDestino { get; set; }
+        public Guid IdUsuarioDestino { get; set; }
 
         // Puede ser "Sistema", "Auditoría", "Administrador", etc.
         public string? Origen { get; set; }

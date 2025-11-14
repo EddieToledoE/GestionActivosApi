@@ -5,12 +5,12 @@ using MediatR;
 
 namespace GestionActivos.Application.ActivoApplication.Queries
 {
-    public record GetActivosByResponsableIdQuery(int ResponsableId) : IRequest<IEnumerable<ActivoDto>>;
+    public record GetActivosByResponsableIdQuery(Guid ResponsableId) : IRequest<IEnumerable<ActivoDto>>;
 
     public class GetActivosByResponsableIdHandler : IRequestHandler<GetActivosByResponsableIdQuery, IEnumerable<ActivoDto>>
     {
         private readonly IActivoRepository _activoRepository;
-  private readonly IMapper _mapper;
+        private readonly IMapper _mapper;
 
         public GetActivosByResponsableIdHandler(IActivoRepository activoRepository, IMapper mapper)
         {
@@ -19,11 +19,11 @@ namespace GestionActivos.Application.ActivoApplication.Queries
         }
 
         public async Task<IEnumerable<ActivoDto>> Handle(
-       GetActivosByResponsableIdQuery request,
-          CancellationToken cancellationToken
+            GetActivosByResponsableIdQuery request,
+            CancellationToken cancellationToken
         )
-  {
-     var activos = await _activoRepository.GetByResponsableIdAsync(request.ResponsableId);
+        {
+            var activos = await _activoRepository.GetByResponsableIdAsync(request.ResponsableId);
             return _mapper.Map<IEnumerable<ActivoDto>>(activos);
         }
     }

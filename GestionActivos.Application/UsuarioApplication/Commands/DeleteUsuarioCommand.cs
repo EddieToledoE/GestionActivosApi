@@ -4,7 +4,7 @@ using MediatR;
 
 namespace GestionActivos.Application.UsuarioApplication.Commands
 {
-    public record DeleteUsuarioCommand(int IdUsuario) : IRequest<bool>;
+    public record DeleteUsuarioCommand(Guid IdUsuario) : IRequest<bool>;
 
     public class DeleteUsuarioHandler : IRequestHandler<DeleteUsuarioCommand, bool>
     {
@@ -20,9 +20,9 @@ namespace GestionActivos.Application.UsuarioApplication.Commands
             CancellationToken cancellationToken
         )
         {
-            if (request.IdUsuario <= 0)
+            if (request.IdUsuario == Guid.Empty)
             {
-                throw new BusinessException("El ID del usuario debe ser mayor que 0.");
+                throw new BusinessException("El ID del usuario no puede ser vacío.");
             }
 
             var user = await _usuarioRepository.GetByIdAsync(request.IdUsuario);

@@ -4,12 +4,13 @@ using GestionActivos.Domain.Entities;
 using GestionActivos.Domain.Exceptions;
 using GestionActivos.Domain.Interfaces.UnitsOfWork;
 using MediatR;
+using System;
 
 namespace GestionActivos.Application.SolicitudApplication.Commands
 {
-    public record CreateSolicitudCommand(CreateSolicitudDto Solicitud) : IRequest<int>;
+    public record CreateSolicitudCommand(CreateSolicitudDto Solicitud) : IRequest<Guid>;
 
-    public class CreateSolicitudHandler : IRequestHandler<CreateSolicitudCommand, int>
+    public class CreateSolicitudHandler : IRequestHandler<CreateSolicitudCommand, Guid>
     {
         private readonly IActivosUnitOfWork _uow;
         private readonly IMapper _mapper;
@@ -22,7 +23,7 @@ namespace GestionActivos.Application.SolicitudApplication.Commands
             _mapper = mapper;
         }
 
-        public async Task<int> Handle(
+        public async Task<Guid> Handle(
             CreateSolicitudCommand request,
             CancellationToken cancellationToken)
         {

@@ -4,19 +4,16 @@ using GestionActivos.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace GestionActivos.Infrastructure.Persistence.Migrations
+namespace GestionActivos.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251110164917_CentroCostoAdded")]
-    partial class CentroCostoAdded
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,15 +24,18 @@ namespace GestionActivos.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("GestionActivos.Domain.Entities.Activo", b =>
                 {
-                    b.Property<int>("IdActivo")
+                    b.Property<Guid>("IdActivo")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdActivo"));
+                    b.Property<string>("CuentaContable")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("Categoria")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                    b.Property<bool>("CuentaContableEtiqueta")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Descripcion")
                         .HasMaxLength(200)
@@ -57,9 +57,13 @@ namespace GestionActivos.Infrastructure.Persistence.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("Factura")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                    b.Property<string>("FacturaPDF")
+                        .HasMaxLength(400)
+                        .HasColumnType("nvarchar(400)");
+
+                    b.Property<string>("FacturaXML")
+                        .HasMaxLength(400)
+                        .HasColumnType("nvarchar(400)");
 
                     b.Property<DateTime?>("FechaAdquisicion")
                         .HasColumnType("datetime2");
@@ -72,8 +76,10 @@ namespace GestionActivos.Infrastructure.Persistence.Migrations
                     b.Property<int>("IdCategoria")
                         .HasColumnType("int");
 
-                    b.Property<byte[]>("Imagen")
-                        .HasColumnType("varbinary(max)");
+                    b.Property<string>("ImagenUrl")
+                        .HasMaxLength(400)
+                        .HasColumnType("nvarchar(400)")
+                        .HasColumnName("ImagenUrl");
 
                     b.Property<string>("Marca")
                         .HasMaxLength(100)
@@ -92,8 +98,8 @@ namespace GestionActivos.Infrastructure.Persistence.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<int>("ResponsableId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ResponsableId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal?>("ValorAdquisicion")
                         .HasPrecision(12, 2)
@@ -114,22 +120,20 @@ namespace GestionActivos.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("GestionActivos.Domain.Entities.Auditoria", b =>
                 {
-                    b.Property<int>("IdAuditoria")
+                    b.Property<Guid>("IdAuditoria")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdAuditoria"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Fecha")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<int>("IdAuditor")
-                        .HasColumnType("int");
+                    b.Property<Guid>("IdAuditor")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("IdUsuarioAuditado")
-                        .HasColumnType("int");
+                    b.Property<Guid>("IdUsuarioAuditado")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Observaciones")
                         .HasColumnType("nvarchar(max)");
@@ -229,8 +233,8 @@ namespace GestionActivos.Infrastructure.Persistence.Migrations
                     b.Property<DateTime?>("FechaInicio")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("IdResponsable")
-                        .HasColumnType("int");
+                    b.Property<Guid>("IdResponsable")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Periodo")
                         .HasMaxLength(20)
@@ -260,11 +264,11 @@ namespace GestionActivos.Infrastructure.Persistence.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("IdActivo")
-                        .HasColumnType("int");
+                    b.Property<Guid>("IdActivo")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("IdAuditoria")
-                        .HasColumnType("int");
+                    b.Property<Guid>("IdAuditoria")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("IdDetalle");
 
@@ -288,36 +292,18 @@ namespace GestionActivos.Infrastructure.Persistence.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<int>("IdActivo")
-                        .HasColumnType("int");
+                    b.Property<Guid>("IdActivo")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("IdTecnico")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Motivo")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                    b.Property<Guid>("IdTecnico")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Observaciones")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Pieza")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<bool>("SugerirBaja")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<bool>("TramiteGarantia")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<decimal?>("ValorAdquisicion")
-                        .HasPrecision(12, 2)
-                        .HasColumnType("decimal(12,2)");
+                    b.Property<string>("Tipo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("IdDiagnostico");
 
@@ -326,6 +312,53 @@ namespace GestionActivos.Infrastructure.Persistence.Migrations
                     b.HasIndex("IdTecnico");
 
                     b.ToTable("MOV_DIAGNOSTICO", (string)null);
+                });
+
+            modelBuilder.Entity("GestionActivos.Domain.Entities.Notificacion", b =>
+                {
+                    b.Property<int>("IdNotificacion")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdNotificacion"));
+
+                    b.Property<DateTime>("Fecha")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<Guid>("IdUsuarioDestino")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Leida")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("Mensaje")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Origen")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Tipo")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.HasKey("IdNotificacion");
+
+                    b.HasIndex("IdUsuarioDestino");
+
+                    b.ToTable("MOV_NOTIFICACION", (string)null);
                 });
 
             modelBuilder.Entity("GestionActivos.Domain.Entities.Permiso", b =>
@@ -359,14 +392,14 @@ namespace GestionActivos.Infrastructure.Persistence.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<int>("IdActivo")
-                        .HasColumnType("int");
+                    b.Property<Guid>("IdActivo")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("IdUsuarioAnterior")
-                        .HasColumnType("int");
+                    b.Property<Guid>("IdUsuarioAnterior")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("IdUsuarioNuevo")
-                        .HasColumnType("int");
+                    b.Property<Guid>("IdUsuarioNuevo")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Motivo")
                         .HasMaxLength(200)
@@ -418,11 +451,9 @@ namespace GestionActivos.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("GestionActivos.Domain.Entities.Solicitud", b =>
                 {
-                    b.Property<int>("IdSolicitud")
+                    b.Property<Guid>("IdSolicitud")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdSolicitud"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Estado")
                         .IsRequired()
@@ -436,11 +467,14 @@ namespace GestionActivos.Infrastructure.Persistence.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<int>("IdEmisor")
-                        .HasColumnType("int");
+                    b.Property<Guid>("IdActivo")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("IdReceptor")
-                        .HasColumnType("int");
+                    b.Property<Guid>("IdEmisor")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("IdReceptor")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Mensaje")
                         .HasMaxLength(300)
@@ -453,6 +487,8 @@ namespace GestionActivos.Infrastructure.Persistence.Migrations
 
                     b.HasKey("IdSolicitud");
 
+                    b.HasIndex("IdActivo");
+
                     b.HasIndex("IdEmisor");
 
                     b.HasIndex("IdReceptor");
@@ -462,11 +498,9 @@ namespace GestionActivos.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("GestionActivos.Domain.Entities.Usuario", b =>
                 {
-                    b.Property<int>("IdUsuario")
+                    b.Property<Guid>("IdUsuario")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdUsuario"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("Activo")
                         .ValueGeneratedOnAdd()
@@ -516,8 +550,8 @@ namespace GestionActivos.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("GestionActivos.Domain.Entities.UsuarioRol", b =>
                 {
-                    b.Property<int>("IdUsuario")
-                        .HasColumnType("int");
+                    b.Property<Guid>("IdUsuario")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("IdRol")
                         .HasColumnType("int");
@@ -616,6 +650,17 @@ namespace GestionActivos.Infrastructure.Persistence.Migrations
                     b.Navigation("Tecnico");
                 });
 
+            modelBuilder.Entity("GestionActivos.Domain.Entities.Notificacion", b =>
+                {
+                    b.HasOne("GestionActivos.Domain.Entities.Usuario", "UsuarioDestino")
+                        .WithMany()
+                        .HasForeignKey("IdUsuarioDestino")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("UsuarioDestino");
+                });
+
             modelBuilder.Entity("GestionActivos.Domain.Entities.Reubicacion", b =>
                 {
                     b.HasOne("GestionActivos.Domain.Entities.Activo", "Activo")
@@ -664,6 +709,12 @@ namespace GestionActivos.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("GestionActivos.Domain.Entities.Solicitud", b =>
                 {
+                    b.HasOne("GestionActivos.Domain.Entities.Activo", "Activo")
+                        .WithMany()
+                        .HasForeignKey("IdActivo")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("GestionActivos.Domain.Entities.Usuario", "Emisor")
                         .WithMany("SolicitudesEmitidas")
                         .HasForeignKey("IdEmisor")
@@ -675,6 +726,8 @@ namespace GestionActivos.Infrastructure.Persistence.Migrations
                         .HasForeignKey("IdReceptor")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Activo");
 
                     b.Navigation("Emisor");
 

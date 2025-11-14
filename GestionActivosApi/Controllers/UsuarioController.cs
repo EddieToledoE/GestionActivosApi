@@ -24,8 +24,8 @@ namespace GestionActivos.API.Controllers
             return Ok(usuarios);
         }
 
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetById(int id)
+        [HttpGet("{id:guid}")]
+        public async Task<IActionResult> GetById(Guid id)
         {
             var usuario = await _mediator.Send(new GetUsuarioByIdQuery(id));
             return Ok(usuario);
@@ -45,8 +45,8 @@ namespace GestionActivos.API.Controllers
             return Ok(new { message = "Usuario creado correctamente", id });
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] UpdateUsuarioDto dto)
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> Update(Guid id, [FromBody] UpdateUsuarioDto dto)
         {
             if (id != dto.Id)
             {
@@ -57,8 +57,8 @@ namespace GestionActivos.API.Controllers
             return Ok(new { message = "Usuario actualizado correctamente" });
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> Delete(Guid id)
         {
             await _mediator.Send(new DeleteUsuarioCommand(id));
             return Ok(new { message = "Usuario desactivado correctamente" });

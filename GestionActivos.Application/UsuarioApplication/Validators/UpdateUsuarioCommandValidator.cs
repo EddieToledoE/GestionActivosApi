@@ -20,8 +20,8 @@ namespace GestionActivos.Application.UsuarioApplication.Validators
             When(x => x.Usuario != null, () =>
             {
                 RuleFor(x => x.Usuario.Id)
-                    .GreaterThan(0)
-                    .WithMessage("El ID del usuario debe ser mayor que 0.");
+                    .NotEmpty()
+                    .WithMessage("El ID del usuario es obligatorio.");
 
                 RuleFor(x => x.Usuario.Nombres)
                     .MaximumLength(100)

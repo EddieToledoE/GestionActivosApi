@@ -6,8 +6,8 @@ namespace GestionActivos.Domain.Interfaces
     {
         Task<Reubicacion?> GetByIdAsync(int id);
         Task<IEnumerable<Reubicacion>> GetAllAsync();
-        Task<IEnumerable<Reubicacion>> GetByActivoIdAsync(int activoId);
-        Task<IEnumerable<Reubicacion>> GetByUsuarioAsync(int usuarioId);
+        Task<IEnumerable<Reubicacion>> GetByActivoIdAsync(Guid activoId);
+        Task<IEnumerable<Reubicacion>> GetByUsuarioAsync(Guid usuarioId);
         Task AddAsync(Reubicacion reubicacion);
         Task UpdateAsync(Reubicacion reubicacion);
         Task DeleteAsync(int id);

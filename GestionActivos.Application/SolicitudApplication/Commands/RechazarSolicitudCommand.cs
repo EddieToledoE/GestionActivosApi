@@ -7,7 +7,7 @@ namespace GestionActivos.Application.SolicitudApplication.Commands
     /// <summary>
     /// Comando para rechazar una solicitud.
     /// </summary>
-    public record RechazarSolicitudCommand(int IdSolicitud, int IdUsuarioAprobador, string? MotivoRechazo) : IRequest<bool>;
+    public record RechazarSolicitudCommand(Guid IdSolicitud, Guid IdUsuarioAprobador, string? MotivoRechazo) : IRequest<bool>;
 
     public class RechazarSolicitudHandler : IRequestHandler<RechazarSolicitudCommand, bool>
     {

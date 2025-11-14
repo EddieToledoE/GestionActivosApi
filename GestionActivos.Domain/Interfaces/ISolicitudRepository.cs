@@ -4,13 +4,13 @@ namespace GestionActivos.Domain.Interfaces
 {
     public interface ISolicitudRepository
     {
-        Task<Solicitud?> GetByIdAsync(int id);
+        Task<Solicitud?> GetByIdAsync(Guid id);
         Task<IEnumerable<Solicitud>> GetAllAsync();
-        Task<IEnumerable<Solicitud>> GetByEmisorIdAsync(int emisorId);
-        Task<IEnumerable<Solicitud>> GetByReceptorIdAsync(int receptorId);
-        Task<bool> ExisteSolicitudPendienteParaActivoAsync(int idActivo);
+        Task<IEnumerable<Solicitud>> GetByEmisorIdAsync(Guid emisorId);
+        Task<IEnumerable<Solicitud>> GetByReceptorIdAsync(Guid receptorId);
+        Task<bool> ExisteSolicitudPendienteParaActivoAsync(Guid idActivo);
         Task AddAsync(Solicitud solicitud);
         Task UpdateAsync(Solicitud solicitud);
-        Task DeleteAsync(int id);
+        Task DeleteAsync(Guid id);
     }
 }
