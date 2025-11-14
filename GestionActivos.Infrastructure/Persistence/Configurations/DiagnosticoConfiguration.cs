@@ -11,13 +11,9 @@ namespace GestionActivos.Infrastructure.Persistence.Configurations
             builder.ToTable("MOV_DIAGNOSTICO");
             builder.HasKey(d => d.IdDiagnostico);
 
-            builder.Property(d => d.Pieza).HasMaxLength(100);
-            builder.Property(d => d.Motivo).HasMaxLength(200);
+            builder.Property(d => d.Tipo).HasColumnType("nvarchar(50)").IsRequired();
             builder.Property(d => d.Observaciones).HasColumnType("nvarchar(max)");
             builder.Property(d => d.Fecha).HasDefaultValueSql("GETDATE()");
-            builder.Property(d => d.TramiteGarantia).HasDefaultValue(false);
-            builder.Property(d => d.SugerirBaja).HasDefaultValue(false);
-            builder.Property(a => a.ValorAdquisicion).HasPrecision(12, 2);
 
             builder
                 .HasOne(d => d.Activo)
