@@ -106,9 +106,9 @@ namespace GestionActivos.Application.ActivoApplication.Commands
                 await request.Activo.Imagen.CopyToAsync(memoryStream, cancellationToken);
                 var fileBytes = memoryStream.ToArray();
 
-                // Generar un nombre único para el archivo
-                var fileName =
-                    $"activo_imagen_{Guid.NewGuid()}{Path.GetExtension(request.Activo.Imagen.FileName)}";
+                // Generar nombre con formato: activo/imagen/fecha/guid.extension
+                var extension = Path.GetExtension(request.Activo.Imagen.FileName);
+                var fileName = GenerateFileName("activo", "imagen", extension);
 
                 // Subir la imagen a Minio
                 var imageUrl = await _fileStorageService.UploadAsync(
@@ -127,8 +127,9 @@ namespace GestionActivos.Application.ActivoApplication.Commands
                 await request.Activo.FacturaPDF.CopyToAsync(memoryStream, cancellationToken);
                 var fileBytes = memoryStream.ToArray();
 
-                var fileName =
-                    $"activo_factura_pdf_{Guid.NewGuid()}{Path.GetExtension(request.Activo.FacturaPDF.FileName)}";
+                // Generar nombre con formato: activo/factura_pdf/fecha/guid.extension
+                var extension = Path.GetExtension(request.Activo.FacturaPDF.FileName);
+                var fileName = GenerateFileName("activo", "factura_pdf", extension);
 
                 var facturaPdfUrl = await _fileStorageService.UploadAsync(
                     fileBytes,
@@ -146,8 +147,9 @@ namespace GestionActivos.Application.ActivoApplication.Commands
                 await request.Activo.FacturaXML.CopyToAsync(memoryStream, cancellationToken);
                 var fileBytes = memoryStream.ToArray();
 
-                var fileName =
-                    $"activo_factura_xml_{Guid.NewGuid()}{Path.GetExtension(request.Activo.FacturaXML.FileName)}";
+                // Generar nombre con formato: activo/factura_xml/fecha/guid.extension
+                var extension = Path.GetExtension(request.Activo.FacturaXML.FileName);
+                var fileName = GenerateFileName("activo", "factura_xml", extension);
 
                 var facturaXmlUrl = await _fileStorageService.UploadAsync(
                     fileBytes,
@@ -176,6 +178,17 @@ namespace GestionActivos.Application.ActivoApplication.Commands
 
             await _activoRepository.AddAsync(activo);
             return activo.IdActivo;
+        }
+
+        /// <summary>
+        /// Genera un nombre de archivo con el formato: entidad/campo/fecha/guid.extension
+        /// Ejemplo: activo/factura_xml/20231114/a1b2c3d4-e5f6-7890-abcd-ef1234567890.pdf
+        /// </summary>
+        private static string GenerateFileName(string entidad, string campo, string extension)
+        {
+            var fecha = DateTime.UtcNow.ToString("yyyyMMdd");
+            var guid = Guid.NewGuid().ToString();
+            return $"{entidad}/{campo}/{fecha}/{guid}{extension}";
         }
     }
 }
