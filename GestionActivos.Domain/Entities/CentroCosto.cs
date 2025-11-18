@@ -11,5 +11,6 @@
 
         // 🔗 Relaciones
         public ICollection<Usuario>? Usuarios { get; set; }
+        public ICollection<ConfigAuditoria>? ConfiguracionesAuditoria { get; set; }
     }
 }
