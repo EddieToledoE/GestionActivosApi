@@ -37,25 +37,41 @@ namespace GestionActivos.Infrastructure.Repositories
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<Auditoria>> GetAuditoriasPorCentroCostoAsync(int idCentroCosto)
+        {
+            return await _context.Set<Auditoria>()
+                .Include(a => a.Auditor)
+                .Include(a => a.UsuarioAuditado)
+                .Include(a => a.CentroCosto)
+                .Include(a => a.Detalles)
+                    .ThenInclude(d => d.Activo)
+                .Where(a => a.IdCentroCosto == idCentroCosto)
+                .OrderByDescending(a => a.Fecha)
+                .ToListAsync();
+        }
+
         public async Task<Auditoria?> GetByIdAsync(Guid id)
         {
             return await _context.Set<Auditoria>()
                 .Include(a => a.Auditor)
                 .Include(a => a.UsuarioAuditado)
+                .Include(a => a.CentroCosto)
                 .Include(a => a.Detalles)
+                    .ThenInclude(d => d.Activo)
                 .FirstOrDefaultAsync(a => a.IdAuditoria == id);
         }
 
         public async Task AddAsync(Auditoria auditoria)
         {
             await _context.Set<Auditoria>().AddAsync(auditoria);
-            await _context.SaveChangesAsync();
+            // SaveChanges se maneja en Unit of Work
         }
 
-        public async Task UpdateAsync(Auditoria auditoria)
+        public Task UpdateAsync(Auditoria auditoria)
         {
             _context.Set<Auditoria>().Update(auditoria);
-            await _context.SaveChangesAsync();
+            // SaveChanges se maneja en Unit of Work
+            return Task.CompletedTask;
         }
     }
 }

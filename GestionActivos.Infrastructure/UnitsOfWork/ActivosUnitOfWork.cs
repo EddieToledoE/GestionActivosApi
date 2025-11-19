@@ -20,7 +20,8 @@ namespace GestionActivos.Infrastructure.UnitsOfWork
             ISolicitudRepository solicitudRepository,
             IReubicacionRepository reubicacionRepository,
             IUsuarioRepository usuarioRepository,
-            INotificacionRepository notificacionRepository
+            INotificacionRepository notificacionRepository,
+            IAuditoriaRepository auditoriaRepository
         )
         {
             _context = context;
@@ -29,6 +30,7 @@ namespace GestionActivos.Infrastructure.UnitsOfWork
             Reubicaciones = reubicacionRepository;
             Usuarios = usuarioRepository;
             Notificaciones = notificacionRepository;
+            Auditorias = auditoriaRepository;
         }
 
         /// <summary>
@@ -55,6 +57,11 @@ namespace GestionActivos.Infrastructure.UnitsOfWork
         /// Repositorio de Notificaciones.
         /// </summary>
         public INotificacionRepository Notificaciones { get; }
+
+        /// <summary>
+        /// Repositorio de Auditorías.
+        /// </summary>
+        public IAuditoriaRepository Auditorias { get; }
 
         /// <summary>
         /// Guarda todos los cambios pendientes en el contexto de la base de datos.

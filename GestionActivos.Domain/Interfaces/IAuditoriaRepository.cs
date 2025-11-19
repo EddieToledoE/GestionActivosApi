@@ -18,6 +18,11 @@ namespace GestionActivos.Domain.Interfaces
         Task<IEnumerable<Auditoria>> GetAuditoriasPorUsuarioAsync(Guid idUsuario);
 
         /// <summary>
+        /// Obtiene todas las auditorías de un centro de costo específico.
+        /// </summary>
+        Task<IEnumerable<Auditoria>> GetAuditoriasPorCentroCostoAsync(int idCentroCosto);
+
+        /// <summary>
         /// Obtiene una auditoría por su ID.
         /// </summary>
         Task<Auditoria?> GetByIdAsync(Guid id);

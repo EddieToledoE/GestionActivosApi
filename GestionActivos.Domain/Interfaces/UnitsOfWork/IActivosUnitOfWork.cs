@@ -32,6 +32,11 @@ namespace GestionActivos.Domain.Interfaces.UnitsOfWork
         INotificacionRepository Notificaciones { get; }
 
         /// <summary>
+        /// Repositorio de Auditorías.
+        /// </summary>
+        IAuditoriaRepository Auditorias { get; }
+
+        /// <summary>
         /// Guarda todos los cambios pendientes en el contexto.
         /// </summary>
         /// <returns>Número de entidades afectadas.</returns>
