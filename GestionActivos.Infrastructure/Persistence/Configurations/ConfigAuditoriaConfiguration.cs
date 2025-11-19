@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using GestionActivos.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using GestionActivos.Domain.Entities;
 
 namespace GestionActivos.Infrastructure.Persistence.Configurations
 {
@@ -11,20 +11,22 @@ namespace GestionActivos.Infrastructure.Persistence.Configurations
             builder.ToTable("CAT_CONFIG_AUDITORIA");
             builder.HasKey(c => c.IdConfig);
 
-            builder.Property(c => c.Periodo)
+            builder
+                .Property(c => c.Periodo)
                 .HasMaxLength(20)
                 .IsRequired()
                 .HasDefaultValue("Mensual");
 
-            builder.Property(c => c.Activa)
-                .HasDefaultValue(true);
+            builder.Property(c => c.Activa).HasDefaultValue(true);
 
-            builder.HasOne(c => c.CentroCosto)
+            builder
+                .HasOne(c => c.CentroCosto)
                 .WithMany(cc => cc.ConfiguracionesAuditoria)
                 .HasForeignKey(c => c.IdCentroCosto)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(c => c.Responsable)
+            builder
+                .HasOne(c => c.Responsable)
                 .WithMany()
                 .HasForeignKey(c => c.IdResponsable)
                 .OnDelete(DeleteBehavior.Restrict)

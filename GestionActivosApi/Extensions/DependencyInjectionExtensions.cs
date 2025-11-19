@@ -1,4 +1,5 @@
-﻿using GestionActivos.Domain.Interfaces;
+﻿using GestionActivos.Application.AuditoriaApplication.Services;
+using GestionActivos.Domain.Interfaces;
 using GestionActivos.Domain.Interfaces.UnitsOfWork;
 using GestionActivos.Infrastructure.Repositories;
 using GestionActivos.Infrastructure.Services;
@@ -20,6 +21,8 @@ namespace GestionActivos.API.Extensions
             services.AddScoped<ISolicitudRepository, SolicitudRepository>();
             services.AddScoped<IReubicacionRepository, ReubicacionRepository>();
             services.AddScoped<INotificacionRepository, NotificacionRepository>();
+            services.AddScoped<IConfigAuditoriaRepository, ConfigAuditoriaRepository>();
+            services.AddScoped<IAuditoriaRepository, AuditoriaRepository>();
 
             return services;
         }
@@ -40,6 +43,7 @@ namespace GestionActivos.API.Extensions
         {
             // Servicios
             services.AddScoped<IFileStorageService, MinioStorageService>();
+            services.AddScoped<AuditoriaService>();
 
             return services;
         }

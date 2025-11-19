@@ -24,6 +24,11 @@ namespace GestionActivos.Infrastructure.Persistence.Configurations
                    .WithMany()
                    .HasForeignKey(a => a.IdUsuarioAuditado)
                    .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(a => a.CentroCosto)
+                   .WithMany()
+                   .HasForeignKey(a => a.IdCentroCosto)
+                   .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
