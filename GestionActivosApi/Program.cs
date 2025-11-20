@@ -1,22 +1,43 @@
 using GestionActivos.API.Extensions;
 using GestionActivos.API.Middleware;
+using GestionActivos.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-// === CONFIGURACI�N ===
+// === CONFIGURACIÓN ===
 ConfigureAppConfiguration(builder);
 ConfigureLogging(builder);
 ConfigureServices(builder);
 
 WebApplication app = builder.Build();
 
+// === CREAR O MIGRAR LA BASE DE DATOS AUTOMÁTICAMENTE ===
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+    // ✅ Si es entorno de desarrollo: crea la BD si no existe
+    // ✅ Si es entorno productivo: aplica migraciones existentes
+    if (app.Environment.IsDevelopment())
+    {
+        dbContext.Database.EnsureCreated();
+        Console.WriteLine("✔ Base de datos creada automáticamente (EnsureCreated)");
+    }
+    else
+    {
+        dbContext.Database.Migrate();
+        Console.WriteLine("✔ Migraciones aplicadas automáticamente (Migrate)");
+    }
+}
+
 // === PIPELINE HTTP ===
 ConfigurePipeline(app, app.Environment);
 
 app.Run();
 
-// ============================ M�TODOS ============================
+// ============================ MÉTODOS ============================
 
 void ConfigureAppConfiguration(WebApplicationBuilder builder)
 {
