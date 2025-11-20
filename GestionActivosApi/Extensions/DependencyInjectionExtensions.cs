@@ -1,4 +1,4 @@
-﻿using GestionActivos.Application.AuditoriaApplication.Services;
+using GestionActivos.Application.AuditoriaApplication.Services;
 using GestionActivos.Domain.Interfaces;
 using GestionActivos.Domain.Interfaces.UnitsOfWork;
 using GestionActivos.Infrastructure.Repositories;
@@ -31,8 +31,10 @@ namespace GestionActivos.API.Extensions
             this IServiceCollection services
         )
         {
-            // Units of Work
-            services.AddScoped<IActivosUnitOfWork, ActivosUnitOfWork>();
+            // Units of Work por Contexto/Agregado
+            services.AddScoped<ISolicitudUnitOfWork, SolicitudUnitOfWork>();
+            services.AddScoped<IAuditoriaUnitOfWork, AuditoriaUnitOfWork>();
+            services.AddScoped<ITransferenciaUnitOfWork, TransferenciaUnitOfWork>();
 
             return services;
         }

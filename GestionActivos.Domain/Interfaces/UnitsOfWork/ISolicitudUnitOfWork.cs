@@ -1,49 +1,43 @@
 namespace GestionActivos.Domain.Interfaces.UnitsOfWork
 {
     /// <summary>
-    /// Unidad de trabajo para el contexto de Activos, que coordina múltiples repositorios
-    /// y maneja transacciones de manera centralizada.
+    /// Unidad de trabajo para el contexto de Solicitudes de transferencia de activos.
+    /// Coordina las operaciones de: crear solicitud, aceptar, rechazar.
     /// </summary>
-    public interface IActivosUnitOfWork : IDisposable
+    public interface ISolicitudUnitOfWork : IDisposable
     {
-        /// <summary>
-        /// Repositorio de Activos.
-        /// </summary>
-        IActivoRepository Activos { get; }
-
         /// <summary>
         /// Repositorio de Solicitudes.
         /// </summary>
         ISolicitudRepository Solicitudes { get; }
 
         /// <summary>
-        /// Repositorio de Reubicaciones.
+        /// Repositorio de Activos (para validar existencia y actualizar responsable).
         /// </summary>
-        IReubicacionRepository Reubicaciones { get; }
+        IActivoRepository Activos { get; }
 
         /// <summary>
-        /// Repositorio de Usuarios.
+        /// Repositorio de Usuarios (para validar emisor, receptor, aprobador).
         /// </summary>
         IUsuarioRepository Usuarios { get; }
 
         /// <summary>
-        /// Repositorio de Notificaciones.
+        /// Repositorio de Reubicaciones (para registrar el histórico al aceptar).
+        /// </summary>
+        IReubicacionRepository Reubicaciones { get; }
+
+        /// <summary>
+        /// Repositorio de Notificaciones (para notificar a los usuarios involucrados).
         /// </summary>
         INotificacionRepository Notificaciones { get; }
 
         /// <summary>
-        /// Repositorio de Auditorías.
-        /// </summary>
-        IAuditoriaRepository Auditorias { get; }
-
-        /// <summary>
         /// Guarda todos los cambios pendientes en el contexto.
         /// </summary>
-        /// <returns>Número de entidades afectadas.</returns>
         Task<int> SaveChangesAsync();
 
         /// <summary>
-        /// Inicia una transacción explícita en la base de datos.
+        /// Inicia una transacción explícita.
         /// </summary>
         Task BeginTransactionAsync();
 

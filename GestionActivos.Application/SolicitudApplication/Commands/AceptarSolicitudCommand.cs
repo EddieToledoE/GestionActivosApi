@@ -12,9 +12,9 @@ namespace GestionActivos.Application.SolicitudApplication.Commands
 
     public class AceptarSolicitudHandler : IRequestHandler<AceptarSolicitudCommand, bool>
     {
-        private readonly IActivosUnitOfWork _uow;
+        private readonly ISolicitudUnitOfWork _uow;
 
-        public AceptarSolicitudHandler(IActivosUnitOfWork uow)
+        public AceptarSolicitudHandler(ISolicitudUnitOfWork uow)
         {
             _uow = uow;
         }

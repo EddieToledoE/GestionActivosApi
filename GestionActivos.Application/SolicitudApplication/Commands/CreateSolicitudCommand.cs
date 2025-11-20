@@ -12,11 +12,11 @@ namespace GestionActivos.Application.SolicitudApplication.Commands
 
     public class CreateSolicitudHandler : IRequestHandler<CreateSolicitudCommand, Guid>
     {
-        private readonly IActivosUnitOfWork _uow;
+        private readonly ISolicitudUnitOfWork _uow;
         private readonly IMapper _mapper;
 
         public CreateSolicitudHandler(
-            IActivosUnitOfWork uow,
+            ISolicitudUnitOfWork uow,
             IMapper mapper)
         {
             _uow = uow;

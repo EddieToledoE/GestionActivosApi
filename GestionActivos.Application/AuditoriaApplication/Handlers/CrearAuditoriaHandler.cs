@@ -7,7 +7,7 @@ using MediatR;
 namespace GestionActivos.Application.AuditoriaApplication.Handlers
 {
     /// <summary>
-    /// Handler para registrar una nueva auditoría completa usando Unit of Work.
+    /// Handler para registrar una nueva auditoría completa usando Unit of Work específico de Auditorías.
     /// 
     /// Flujo:
     /// 1. Inicia una transacción explícita
@@ -24,9 +24,9 @@ namespace GestionActivos.Application.AuditoriaApplication.Handlers
     /// </summary>
     public class CrearAuditoriaHandler : IRequestHandler<CrearAuditoriaCommand, Guid>
     {
-        private readonly IActivosUnitOfWork _uow;
+        private readonly IAuditoriaUnitOfWork _uow;
 
-        public CrearAuditoriaHandler(IActivosUnitOfWork uow)
+        public CrearAuditoriaHandler(IAuditoriaUnitOfWork uow)
         {
             _uow = uow;
         }

@@ -12,9 +12,9 @@ namespace GestionActivos.Application.ReubicacionApplication.Handlers
     /// </summary>
     public class AuditorTransferCommandHandler : IRequestHandler<AuditorTransferCommand, bool>
     {
-        private readonly IActivosUnitOfWork _uow;
+        private readonly ITransferenciaUnitOfWork _uow;
 
-        public AuditorTransferCommandHandler(IActivosUnitOfWork uow)
+        public AuditorTransferCommandHandler(ITransferenciaUnitOfWork uow)
         {
             _uow = uow;
         }

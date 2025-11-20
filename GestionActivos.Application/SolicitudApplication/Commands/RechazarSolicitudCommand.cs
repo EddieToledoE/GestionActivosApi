@@ -11,9 +11,9 @@ namespace GestionActivos.Application.SolicitudApplication.Commands
 
     public class RechazarSolicitudHandler : IRequestHandler<RechazarSolicitudCommand, bool>
     {
-        private readonly IActivosUnitOfWork _uow;
+        private readonly ISolicitudUnitOfWork _uow;
 
-        public RechazarSolicitudHandler(IActivosUnitOfWork uow)
+        public RechazarSolicitudHandler(ISolicitudUnitOfWork uow)
         {
             _uow = uow;
         }
