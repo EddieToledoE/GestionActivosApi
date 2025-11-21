@@ -63,5 +63,18 @@ namespace GestionActivos.API.Controllers
             await _mediator.Send(new DeleteUsuarioCommand(id));
             return Ok(new { message = "Usuario desactivado correctamente" });
         }
+
+        /// <summary>
+        /// Asigna un rol a un usuario.
+        /// </summary>
+        [HttpPost("asignar-rol")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> AsignarRol([FromBody] AsignarRolDto dto)
+        {
+            await _mediator.Send(new AsignarRolCommand(dto));
+            return Ok(new { message = "Rol asignado correctamente al usuario." });
+        }
     }
 }

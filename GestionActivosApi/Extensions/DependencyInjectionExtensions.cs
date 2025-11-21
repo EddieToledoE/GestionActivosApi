@@ -24,6 +24,10 @@ namespace GestionActivos.API.Extensions
             services.AddScoped<IConfigAuditoriaRepository, ConfigAuditoriaRepository>();
             services.AddScoped<IAuditoriaRepository, AuditoriaRepository>();
             services.AddScoped<IUsuarioCentroCostoRepository, UsuarioCentroCostoRepository>();
+            services.AddScoped<IRolRepository, RolRepository>();
+            services.AddScoped<IPermisoRepository, PermisoRepository>();
+            services.AddScoped<IRolPermisoRepository, RolPermisoRepository>();
+            services.AddScoped<IUsuarioRolRepository, UsuarioRolRepository>();
 
             return services;
         }
