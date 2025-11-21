@@ -24,6 +24,7 @@ namespace GestionActivos.Infrastructure.Persistence
         public DbSet<DetalleAuditoria> DetallesAuditoria => Set<DetalleAuditoria>();
         public DbSet<CentroCosto> CentrosCosto => Set<CentroCosto>();
         public DbSet<Notificacion> Notificaciones => Set<Notificacion>();
+        public DbSet<UsuarioCentroCosto> UsuarioCentrosCosto => Set<UsuarioCentroCosto>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

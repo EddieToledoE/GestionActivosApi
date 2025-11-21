@@ -20,7 +20,12 @@
         public ICollection<Diagnostico> Diagnosticos { get; set; } = new List<Diagnostico>();
         public ICollection<Solicitud> SolicitudesEmitidas { get; set; } = new List<Solicitud>();
         public ICollection<Solicitud> SolicitudesRecibidas { get; set; } = new List<Solicitud>();
+        
+        // Centro de costo principal (legacy - mantener por compatibilidad)
         public int? IdCentroCosto { get; set; }
         public CentroCosto? CentroCosto { get; set; }
+        
+        // Relación muchos-a-muchos con CentrosCosto
+        public ICollection<UsuarioCentroCosto> UsuarioCentrosCosto { get; set; } = new List<UsuarioCentroCosto>();
     }
 }

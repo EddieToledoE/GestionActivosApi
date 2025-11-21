@@ -12,5 +12,8 @@
         // 🔗 Relaciones
         public ICollection<Usuario>? Usuarios { get; set; }
         public ICollection<ConfigAuditoria>? ConfiguracionesAuditoria { get; set; }
+        
+        // Relación muchos-a-muchos con Usuarios
+        public ICollection<UsuarioCentroCosto> UsuariosAsignados { get; set; } = new List<UsuarioCentroCosto>();
     }
 }

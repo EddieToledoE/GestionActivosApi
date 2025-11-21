@@ -23,6 +23,7 @@ namespace GestionActivos.API.Extensions
             services.AddScoped<INotificacionRepository, NotificacionRepository>();
             services.AddScoped<IConfigAuditoriaRepository, ConfigAuditoriaRepository>();
             services.AddScoped<IAuditoriaRepository, AuditoriaRepository>();
+            services.AddScoped<IUsuarioCentroCostoRepository, UsuarioCentroCostoRepository>();
 
             return services;
         }
