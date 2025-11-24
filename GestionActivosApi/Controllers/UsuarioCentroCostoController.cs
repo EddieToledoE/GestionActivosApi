@@ -62,6 +62,8 @@ namespace GestionActivos.API.Controllers
 
         /// <summary>
         /// Asigna un centro de costo a un usuario.
+        /// Si ya existía una asignación inactiva, la reactiva.
+        /// Si no existe, crea una nueva asignación.
         /// </summary>
         /// <param name="dto">Datos de la asignación</param>
         /// <returns>Confirmación de la asignación</returns>
@@ -72,7 +74,7 @@ namespace GestionActivos.API.Controllers
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<IActionResult> AsignarCentroCosto([FromBody] AsignarCentroCostoDto dto)
         {
-            // Validar que el usuario existe
+            // 1. Validar que el usuario existe
             var usuario = await _usuarioRepository.GetByIdAsync(dto.IdUsuario);
             if (usuario == null)
             {
@@ -84,18 +86,43 @@ namespace GestionActivos.API.Controllers
                 return BadRequest(new { message = "No se pueden asignar centros de costo a usuarios inactivos." });
             }
 
-            // Validar que no exista ya una asignación activa
-            var existeAsignacion = await _repository.ExistsAsync(dto.IdUsuario, dto.IdCentroCosto);
-            if (existeAsignacion)
+            // 2. Verificar si ya existe una asignación (activa o inactiva)
+            var asignacionExistente = await _repository.GetByIdAsync(dto.IdUsuario, dto.IdCentroCosto);
+
+            if (asignacionExistente != null)
             {
-                return Conflict(new 
+                // Si ya existe y está activa ? Conflict
+                if (asignacionExistente.Activo)
+                {
+                    return Conflict(new 
+                    { 
+                        message = $"Ya existe una asignación activa del usuario al centro de costo con ID {dto.IdCentroCosto}." 
+                    });
+                }
+
+                // Si existe pero está inactiva ? Reactivar
+                asignacionExistente.Activo = true;
+                asignacionExistente.FechaInicio = dto.FechaInicio ?? DateTime.Now;
+                asignacionExistente.FechaFin = null; // Limpiar fecha de fin
+
+                await _repository.UpdateAsync(asignacionExistente);
+
+                return Ok(new 
                 { 
-                    message = $"Ya existe una asignación activa del usuario al centro de costo con ID {dto.IdCentroCosto}." 
+                    message = "Centro de costo reactivado correctamente.",
+                    accion = "reactivado",
+                    data = new
+                    {
+                        idUsuario = asignacionExistente.IdUsuario,
+                        idCentroCosto = asignacionExistente.IdCentroCosto,
+                        fechaInicio = asignacionExistente.FechaInicio,
+                        activo = asignacionExistente.Activo
+                    }
                 });
             }
 
-            // Crear nueva asignación
-            var asignacion = new UsuarioCentroCosto
+            // 3. Si no existe ? Crear nueva asignación
+            var nuevaAsignacion = new UsuarioCentroCosto
             {
                 IdUsuario = dto.IdUsuario,
                 IdCentroCosto = dto.IdCentroCosto,
@@ -103,16 +130,18 @@ namespace GestionActivos.API.Controllers
                 Activo = true
             };
 
-            await _repository.AddAsync(asignacion);
+            await _repository.AddAsync(nuevaAsignacion);
 
             return Ok(new 
             { 
                 message = "Centro de costo asignado correctamente.",
+                accion = "creado",
                 data = new
                 {
-                    idUsuario = asignacion.IdUsuario,
-                    idCentroCosto = asignacion.IdCentroCosto,
-                    fechaInicio = asignacion.FechaInicio
+                    idUsuario = nuevaAsignacion.IdUsuario,
+                    idCentroCosto = nuevaAsignacion.IdCentroCosto,
+                    fechaInicio = nuevaAsignacion.FechaInicio,
+                    activo = nuevaAsignacion.Activo
                 }
             });
         }
