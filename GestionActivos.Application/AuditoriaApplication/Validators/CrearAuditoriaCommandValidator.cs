@@ -15,10 +15,6 @@ namespace GestionActivos.Application.AuditoriaApplication.Validators
                 .NotEmpty()
                 .WithMessage("El ID del usuario auditado es obligatorio.");
 
-            RuleFor(x => x.IdCentroCosto)
-                .GreaterThan(0)
-                .WithMessage("El ID del centro de costo debe ser mayor a 0.");
-
             RuleFor(x => x.Detalles)
                 .NotEmpty()
                 .WithMessage("Debe incluir al menos un detalle de auditoría.");
