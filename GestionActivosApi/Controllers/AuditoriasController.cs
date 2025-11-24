@@ -1,6 +1,7 @@
 using GestionActivos.Application.AuditoriaApplication.Commands;
 using GestionActivos.Application.AuditoriaApplication.DTOs;
 using GestionActivos.Application.AuditoriaApplication.Queries;
+using GestionActivos.Domain.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,19 +9,96 @@ namespace GestionActivos.API.Controllers
 {
     /// <summary>
     /// Controlador para gestionar las auditorías de usuarios.
-    /// Determina dinámicamente si un usuario tiene auditorías pendientes
-    /// según la configuración de su centro de costo.
-    /// También permite registrar y consultar auditorías completadas.
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class AuditoriasController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IUsuarioRolRepository _usuarioRolRepository;
+        private readonly IUsuarioCentroCostoRepository _usuarioCentroCostoRepository;
 
-        public AuditoriasController(IMediator mediator)
+        public AuditoriasController(
+            IMediator mediator,
+            IUsuarioRolRepository usuarioRolRepository,
+            IUsuarioCentroCostoRepository usuarioCentroCostoRepository)
         {
             _mediator = mediator;
+            _usuarioRolRepository = usuarioRolRepository;
+            _usuarioCentroCostoRepository = usuarioCentroCostoRepository;
+        }
+
+        /// <summary>
+        /// Obtiene auditorías agrupadas por centro de costo y tipo.
+        /// Requiere header X-User-Id y permiso "Auditoria_Ver_Externos".
+        /// 
+        /// Respuesta agrupada:
+        /// - Por centro de costo
+        /// - Por tipo (Auto/Externa)
+        /// - Ordenadas por fecha descendente
+        /// </summary>
+        [HttpGet]
+        [ProducesResponseType(typeof(AuditoriasAgrupadasResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetAuditoriasAgrupadas()
+        {
+            // 1. Obtener X-User-Id del header
+            if (!Request.Headers.TryGetValue("X-User-Id", out var userIdHeader))
+            {
+                return BadRequest(new { error = "Header 'X-User-Id' es requerido." });
+            }
+
+            if (!Guid.TryParse(userIdHeader.ToString(), out var idUsuario))
+            {
+                return BadRequest(new { error = "El valor de 'X-User-Id' no es un GUID válido." });
+            }
+
+            // 2. Verificar si el usuario tiene el permiso "Auditoria_Ver_Externos"
+            var rolesUsuario = await _usuarioRolRepository.GetRolesByUsuarioIdAsync(idUsuario);
+            var tienePermisoExterno = rolesUsuario
+                .SelectMany(ur => ur.Rol.Permisos)
+                .Any(rp => rp.Permiso.Nombre.Equals("Auditoria_Ver_Externos", StringComparison.OrdinalIgnoreCase));
+
+            if (!tienePermisoExterno)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new 
+                { 
+                    error = "No tienes permiso para ver auditorías externas.",
+                    permisoRequerido = "Auditoria_Ver_Externos"
+                });
+            }
+
+            // 3. Obtener centros de costo accesibles
+            var centrosCosto = await _usuarioCentroCostoRepository.GetByUsuarioIdAsync(idUsuario);
+            var idsCentrosCosto = centrosCosto
+                .Where(ucc => ucc.Activo)
+                .Select(ucc => ucc.IdCentroCosto)
+                .ToList();
+
+            if (!idsCentrosCosto.Any())
+            {
+                return NotFound(new 
+                { 
+                    message = "No tienes acceso a ningún centro de costo." 
+                });
+            }
+
+            // 4. Ejecutar query
+            var query = new GetAuditoriasAgrupadasQuery(idUsuario, idsCentrosCosto);
+            var resultado = await _mediator.Send(query);
+
+            // 5. Validar si hay auditorías
+            if (!resultado.CentrosCosto.Any())
+            {
+                return NotFound(new 
+                { 
+                    message = "No se encontraron auditorías en los centros de costo accesibles." 
+                });
+            }
+
+            return Ok(resultado);
         }
 
         /// <summary>
