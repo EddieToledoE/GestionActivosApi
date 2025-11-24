@@ -7,6 +7,7 @@ namespace GestionActivos.Domain.Interfaces
         Task<Activo?> GetByIdAsync(Guid id);
         Task<IEnumerable<Activo>> GetAllAsync();
         Task<IEnumerable<Activo>> GetByResponsableIdAsync(Guid responsableId);
+        Task<IEnumerable<Activo>> GetActivosByCentroCostoAsync(int idCentroCosto);
         Task AddAsync(Activo activo);
         Task UpdateAsync(Activo activo);
         Task DeleteAsync(Guid id);

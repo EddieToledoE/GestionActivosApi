@@ -34,8 +34,21 @@ namespace GestionActivos.Infrastructure.Repositories
         {
             return await _context
                 .Activos.Include(a => a.Responsable)
+                    .ThenInclude(r => r.CentroCosto)
                 .Include(a => a.CategoriaNavigation)
                 .Where(a => a.ResponsableId == responsableId)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Activo>> GetActivosByCentroCostoAsync(int idCentroCosto)
+        {
+            return await _context
+                .Activos.Include(a => a.Responsable)
+                    .ThenInclude(r => r.CentroCosto)
+                .Include(a => a.CategoriaNavigation)
+                .Where(a => a.Responsable.IdCentroCosto == idCentroCosto)
+                .AsNoTracking()
                 .ToListAsync();
         }
 

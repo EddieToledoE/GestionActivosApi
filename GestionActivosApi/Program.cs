@@ -1,7 +1,9 @@
 using GestionActivos.API.Extensions;
+using GestionActivos.API.Filters;
 using GestionActivos.API.Middleware;
 using GestionActivos.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using Serilog;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -72,7 +74,33 @@ void ConfigureServices(WebApplicationBuilder builder)
 
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
+    
+    // Configuración de Swagger con soporte para headers personalizados
+    builder.Services.AddSwaggerGen(options =>
+    {
+        options.SwaggerDoc("v1", new OpenApiInfo
+        {
+            Title = "Gestión de Activos API",
+            Version = "v1",
+            Description = "API para la gestión de activos empresariales con control de permisos y centros de costo",
+            Contact = new OpenApiContact
+            {
+                Name = "Equipo de Desarrollo",
+                Email = "desarrollo@empresa.com"
+            }
+        });
+
+        // Agregar filtro para headers personalizados (X-User-Id)
+        options.OperationFilter<AddUserIdHeaderOperationFilter>();
+
+        // Habilitar comentarios XML si existen
+        var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+        var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+        if (File.Exists(xmlPath))
+        {
+            options.IncludeXmlComments(xmlPath);
+        }
+    });
 }
 
 void ConfigurePipeline(WebApplication app, IHostEnvironment env)
@@ -83,7 +111,12 @@ void ConfigurePipeline(WebApplication app, IHostEnvironment env)
     if (env.IsDevelopment())
     {
         app.UseSwagger();
-        app.UseSwaggerUI();
+        app.UseSwaggerUI(options =>
+        {
+            options.SwaggerEndpoint("/swagger/v1/swagger.json", "Gestión de Activos API v1");
+            options.RoutePrefix = "swagger";
+            options.DocumentTitle = "Gestión de Activos API";
+        });
     }
 
     app.UseHttpsRedirection();
