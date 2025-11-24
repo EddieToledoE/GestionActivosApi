@@ -13,5 +13,6 @@ namespace GestionActivos.Domain.Interfaces
         Task AddAsync(Usuario usuario);
         Task UpdateAsync(Usuario usuario);
         Task<bool> ExistsByCorreoAsync(string correo);
+        Task<IEnumerable<Usuario>> GetUsuariosByCentrosCostoAsync(List<int> idsCentrosCosto);
     }
 }
