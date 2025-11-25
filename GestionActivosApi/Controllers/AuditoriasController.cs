@@ -102,6 +102,22 @@ namespace GestionActivos.API.Controllers
         }
 
         /// <summary>
+        /// Obtiene una auditoría completa con sus detalles.
+        /// Incluye información del auditor, usuario auditado, centro de costo
+        /// y todos los activos auditados con su estado.
+        /// </summary>
+        /// <param name="id">ID de la auditoría</param>
+        /// <returns>Auditoría con detalles completos</returns>
+        [HttpGet("{id:guid}")]
+        [ProducesResponseType(typeof(AuditoriaConDetallesDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetAuditoriaConDetalles(Guid id)
+        {
+            var resultado = await _mediator.Send(new GetAuditoriaConDetallesQuery(id));
+            return Ok(resultado);
+        }
+
+        /// <summary>
         /// Obtiene el estado de auditoría de un usuario específico.
         /// </summary>
         /// <param name="idUsuario">GUID del usuario</param>
