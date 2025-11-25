@@ -46,15 +46,24 @@ namespace GestionActivos.Application.AuditoriaApplication.Handlers
             foreach (var grupoCentro in auditoriasPorCentro)
             {
                 var idCentroCosto = grupoCentro.Key;
-                var nombreCentro = $"CentroCosto_{idCentroCosto}";
-
-                // Obtener nombre real del centro de costo si está disponible
+                
+                // Obtener información del centro de costo
                 var primerAuditoria = grupoCentro.FirstOrDefault();
-                if (primerAuditoria?.CentroCosto != null)
+                var centro = primerAuditoria?.CentroCosto;
+
+                // ? Construir clave con formato: RazonSocial_Ubicacion_Area
+                string nombreCentro;
+                if (centro != null)
                 {
-                    nombreCentro = !string.IsNullOrEmpty(primerAuditoria.CentroCosto.RazonSocial)
-                        ? primerAuditoria.CentroCosto.RazonSocial
-                        : nombreCentro;
+                    var razonSocial = !string.IsNullOrEmpty(centro.RazonSocial) ? centro.RazonSocial : "SinRazonSocial";
+                    var ubicacion = !string.IsNullOrEmpty(centro.Ubicacion) ? centro.Ubicacion : "SinUbicacion";
+                    var area = !string.IsNullOrEmpty(centro.Area) ? centro.Area : "SinArea";
+                    
+                    nombreCentro = $"{razonSocial}_{ubicacion}_{area}";
+                }
+                else
+                {
+                    nombreCentro = $"CentroCosto_{idCentroCosto}";
                 }
 
                 var auditoriasPorTipo = new AuditoriasPorTipoDto();

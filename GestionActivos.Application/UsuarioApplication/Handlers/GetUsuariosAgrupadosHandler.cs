@@ -59,13 +59,24 @@ namespace GestionActivos.Application.UsuarioApplication.Handlers
             foreach (var grupoCentro in usuariosPorCentro)
             {
                 var idCentroCosto = grupoCentro.Key;
-                var nombreCentro = $"CentroCosto_{idCentroCosto}";
-
-                // Obtener nombre real del centro si está disponible
+                
+                // Obtener información del centro de costo
                 var primerUsuario = grupoCentro.FirstOrDefault();
-                if (primerUsuario?.CentroCosto != null && !string.IsNullOrEmpty(primerUsuario.CentroCosto.RazonSocial))
+                var centro = primerUsuario?.CentroCosto;
+
+                // ? Construir clave con formato: RazonSocial_Ubicacion_Area
+                string nombreCentro;
+                if (centro != null)
                 {
-                    nombreCentro = primerUsuario.CentroCosto.RazonSocial;
+                    var razonSocial = !string.IsNullOrEmpty(centro.RazonSocial) ? centro.RazonSocial : "SinRazonSocial";
+                    var ubicacion = !string.IsNullOrEmpty(centro.Ubicacion) ? centro.Ubicacion : "SinUbicacion";
+                    var area = !string.IsNullOrEmpty(centro.Area) ? centro.Area : "SinArea";
+                    
+                    nombreCentro = $"{razonSocial}_{ubicacion}_{area}";
+                }
+                else
+                {
+                    nombreCentro = $"CentroCosto_{idCentroCosto}";
                 }
 
                 // Proyectar a DTOs y ordenar alfabéticamente

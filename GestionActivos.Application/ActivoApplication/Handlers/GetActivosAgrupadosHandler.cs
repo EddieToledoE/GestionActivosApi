@@ -68,14 +68,36 @@ namespace GestionActivos.Application.ActivoApplication.Handlers
                         .Where(a => a.ResponsableId != request.IdUsuario) // Excluir propios
                         .Where(a => a.Estatus == "Activo") // ? Filtrar solo activos
                         .OrderByDescending(a => a.FechaAdquisicion)
-                        .Select(a => new ActivoResumenDto
+                        .ToList();
+
+                    if (activosFiltrados.Any())
+                    {
+                        // ? Construir clave con formato: RazonSocial_Ubicacion_Area
+                        var primerActivo = activosFiltrados.First();
+                        var centro = primerActivo.Responsable?.CentroCosto;
+                        
+                        string nombreCentro;
+                        if (centro != null)
+                        {
+                            var razonSocial = !string.IsNullOrEmpty(centro.RazonSocial) ? centro.RazonSocial : "SinRazonSocial";
+                            var ubicacion = !string.IsNullOrEmpty(centro.Ubicacion) ? centro.Ubicacion : "SinUbicacion";
+                            var area = !string.IsNullOrEmpty(centro.Area) ? centro.Area : "SinArea";
+                            
+                            nombreCentro = $"{razonSocial}_{ubicacion}_{area}";
+                        }
+                        else
+                        {
+                            nombreCentro = $"CentroCosto_{idCentroCosto}";
+                        }
+
+                        var activosDto = activosFiltrados.Select(a => new ActivoResumenDto
                         {
                             IdActivo = a.IdActivo,
                             Nombre = a.Descripcion,
                             Categoria = a.CategoriaNavigation?.Nombre,
                             Responsable = $"{a.Responsable.Nombres} {a.Responsable.ApellidoPaterno}".Trim(),
-                            CentroCosto = a.Responsable.CentroCosto != null 
-                                ? $"{a.Responsable.CentroCosto.RazonSocial} - {a.Responsable.CentroCosto.Ubicacion}".Trim()
+                            CentroCosto = centro != null 
+                                ? $"{centro.RazonSocial} - {centro.Ubicacion}".Trim()
                                 : null,
                             Estado = a.Estatus,
                             FechaAdquisicion = a.FechaAdquisicion,
@@ -83,13 +105,9 @@ namespace GestionActivos.Application.ActivoApplication.Handlers
                             Marca = a.Marca,
                             Modelo = a.Modelo,
                             Etiqueta = a.Etiqueta
-                        })
-                        .ToList();
+                        }).ToList();
 
-                    if (activosFiltrados.Any())
-                    {
-                        var nombreCentro = activosFiltrados.FirstOrDefault()?.CentroCosto ?? $"CentroCosto_{idCentroCosto}";
-                        response.CentrosCosto[$"CentroCosto_{idCentroCosto}"] = activosFiltrados;
+                        response.CentrosCosto[nombreCentro] = activosDto;
                     }
                 }
             }
