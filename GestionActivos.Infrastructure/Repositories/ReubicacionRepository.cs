@@ -19,7 +19,9 @@ namespace GestionActivos.Infrastructure.Repositories
             return await _context.Reubicaciones
                 .Include(r => r.Activo)
                 .Include(r => r.UsuarioAnterior)
+                    .ThenInclude(u => u.CentroCosto)
                 .Include(r => r.UsuarioNuevo)
+                    .ThenInclude(u => u.CentroCosto)
                 .FirstOrDefaultAsync(r => r.IdReubicacion == id);
         }
 
@@ -28,7 +30,9 @@ namespace GestionActivos.Infrastructure.Repositories
             return await _context.Reubicaciones
                 .Include(r => r.Activo)
                 .Include(r => r.UsuarioAnterior)
+                    .ThenInclude(u => u.CentroCosto)
                 .Include(r => r.UsuarioNuevo)
+                    .ThenInclude(u => u.CentroCosto)
                 .ToListAsync();
         }
 
@@ -37,9 +41,12 @@ namespace GestionActivos.Infrastructure.Repositories
             return await _context.Reubicaciones
                 .Include(r => r.Activo)
                 .Include(r => r.UsuarioAnterior)
+                    .ThenInclude(u => u.CentroCosto)
                 .Include(r => r.UsuarioNuevo)
+                    .ThenInclude(u => u.CentroCosto)
                 .Where(r => r.IdActivo == activoId)
                 .OrderByDescending(r => r.Fecha)
+                .AsNoTracking()
                 .ToListAsync();
         }
 
@@ -48,7 +55,9 @@ namespace GestionActivos.Infrastructure.Repositories
             return await _context.Reubicaciones
                 .Include(r => r.Activo)
                 .Include(r => r.UsuarioAnterior)
+                    .ThenInclude(u => u.CentroCosto)
                 .Include(r => r.UsuarioNuevo)
+                    .ThenInclude(u => u.CentroCosto)
                 .Where(r => r.IdUsuarioAnterior == usuarioId || r.IdUsuarioNuevo == usuarioId)
                 .OrderByDescending(r => r.Fecha)
                 .ToListAsync();

@@ -21,8 +21,7 @@ namespace GestionActivos.API.Controllers
         public ActivoController(
             IMediator mediator,
             IUsuarioRolRepository usuarioRolRepository,
-            IUsuarioCentroCostoRepository usuarioCentroCostoRepository
-        )
+            IUsuarioCentroCostoRepository usuarioCentroCostoRepository)
         {
             _mediator = mediator;
             _usuarioRolRepository = usuarioRolRepository;
@@ -101,6 +100,21 @@ namespace GestionActivos.API.Controllers
         {
             var activo = await _mediator.Send(new GetActivoByIdQuery(id));
             return Ok(activo);
+        }
+
+        /// <summary>
+        /// Obtiene un activo con su historial completo de reubicaciones.
+        /// Útil para trazabilidad y auditoría de movimientos del activo.
+        /// </summary>
+        /// <param name="id">ID del activo</param>
+        /// <returns>Activo con historial de reubicaciones ordenado por fecha descendente</returns>
+        [HttpGet("{id:guid}/historial")]
+        [ProducesResponseType(typeof(ActivoConHistorialDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetActivoConHistorial(Guid id)
+        {
+            var resultado = await _mediator.Send(new GetActivoConHistorialQuery(id));
+            return Ok(resultado);
         }
 
         /// <summary>
