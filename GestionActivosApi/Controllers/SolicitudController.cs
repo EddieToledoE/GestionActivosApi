@@ -17,6 +17,22 @@ namespace GestionActivos.API.Controllers
             _mediator = mediator;
         }
 
+        /// <summary>
+        /// Obtiene el conteo de solicitudes pendientes de un usuario.
+        /// Útil para mostrar badge de notificaciones con el número total.
+        /// Incluye desglose por tipo de solicitud.
+        /// </summary>
+        /// <param name="idUsuario">ID del usuario</param>
+        /// <returns>Conteo total y por tipo de solicitudes pendientes</returns>
+        [HttpGet("conteo/{idUsuario:guid}")]
+        [ProducesResponseType(typeof(ConteoSolicitudesDto), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetConteoSolicitudes(Guid idUsuario)
+        {
+            var query = new GetConteoSolicitudesByUsuarioQuery(idUsuario);
+            var resultado = await _mediator.Send(query);
+            return Ok(resultado);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateSolicitudDto dto)
         {
